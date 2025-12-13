@@ -1,0 +1,33 @@
+site_url: https://blog.quexeky.dev
+display_url: https://blog.quexeky.dev
+
+show_preview_links: true
+
+publish_mode: editorial_workflow
+backend:
+  name: github
+  repo: quexeky/blog
+  branch: master
+  base_url: https://blog.quexeky.dev
+  auth_endpoint: api/auth
+  squash_merges: true
+  preview_context: 'cloudflare preview deploy'
+
+media_folder: "static/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "posts"
+    label: "Posts"
+    folder: "content/posts"
+    create: true
+    slug: "{{slug}}-{{year}}-{{month}}-{{day}}"
+
+    editor:
+      preview: true
+    
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: 'Description', name: 'description', widget: 'string' }
+      - { label: "Body", name: "body", widget: "markdown" }
