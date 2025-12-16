@@ -37,6 +37,18 @@ collections:
         widget: "datetime"
         format: "YYYY-MM-DDTHH:mm:ssZ"
         picker_utc: false
+      - label: "Draft" 
+        name: "draft" 
+        widget: "boolean" 
+        default: true
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        required: false
+      - label: "Categories"
+        name: "categories"
+        widget: "list"
+        required: false
       - label: 'Description'
         name: 'description'
         widget: 'string'

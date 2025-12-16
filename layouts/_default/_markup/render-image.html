@@ -1,0 +1,31 @@
+{{- $u := .Destination -}}
+{{- $img := .Page.Resources.GetMatch $u -}}
+{{- if not $img -}}
+{{- $img = resources.GetRemote $u -}}
+{{- end -}}
+
+{{- if $img -}}
+{{- $startTag := "div" -}}
+{{- if eq .Title "center" -}}
+{{- $startTag = "figure" -}}
+{{- end -}}
+
+<{{ $startTag }} class="post-img-container">
+    {{- /* Resize large images to max 1200px wide */ -}}
+    {{- if gt $img.Width 1200 -}}
+    {{- $img = $img.Resize "1200x webp" -}}
+    {{- else -}}
+    {{- $img = $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
+    {{- end -}}
+
+    <img loading="lazy" src="{{ $img.RelPermalink }}" alt="{{ .Text }}" width="{{ $img.Width }}"
+        height="{{ $img.Height }}">
+
+    {{- if .Title -}}
+    <figcaption>{{ .Title }}</figcaption>
+    {{- end -}}
+</{{ $startTag }}>
+{{- else -}}
+{{- /* Fallback for external images that can't be processed */ -}}
+<img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" title="{{ .Title }}">
+{{- end -}}

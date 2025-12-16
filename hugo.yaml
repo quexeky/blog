@@ -39,7 +39,7 @@ params:
   UseHugoToc: true
   disableSpecial1stPost: false
   disableScrollToTop: false
-  comments: false
+  comments: true
   hidemeta: false
   hideSummary: true
   showtoc: true
@@ -66,23 +66,15 @@ params:
     - name: linkedin
       url: "https://www.linkedin.com/in/louis-van-liefland-4285b4277/"
 
-  analytics:
-    google:
-      SiteVerificationTag: "XYZabc"
-    bing:
-      SiteVerificationTag: "XYZabc"
-    yandex:
-      SiteVerificationTag: "XYZabc"
-
   cover:
     hidden: true # hide everywhere but not in structured data
     hiddenInList: true # hide on list pages and home
     hiddenInSingle: true # hide on single page
 
   editPost:
-    URL: "https://github.com/<path_to_repo>/content"
-    Text: "Suggest Changes" # edit text
-    appendFilePath: true # to append file path to Edit link
+    URL: "https://github.com/blog/tree/master/content"
+    Text: "Suggest Changes"
+    appendFilePath: true
 
   # for search
   # https://fusejs.io/api/options.html
@@ -93,8 +85,22 @@ params:
     distance: 1000
     threshold: 0.4
     minMatchCharLength: 0
+    ignoreLocation: true
     limit: 10 # refer: https://www.fusejs.io/api/methods.html#search
-    keys: ["title", "permalink", "summary", "content"]
+    keys: ["title", "permalink", "summary", "content", "tags"]
+
+  giscus:
+    repo: quexeky/blog
+    repoID: R_kgDOQn_o2Q
+    category: Post comments
+    categoryID: DIC_kwDOQn_o2c4Cz3HK
+    mapping: pathname
+    reactionsEnabled: 1
+    emitMetadata: 0
+    inputPosition: bottom
+    theme: light
+    lang: en
+    loading: lazy
 
 
 menu:
@@ -106,7 +112,11 @@ menu:
     - identifier: search
       name: search
       url: /search/
-      weight: 20
+      weight: 1
+    - identifier: rss
+      name: RSS
+      url: /index.xml
+      weight: 40
 #    - identifier: example
 #      name: example.org
 #      url: https://example.org
@@ -117,8 +127,8 @@ pygmentsUseClasses: true
 markup:
   highlight:
     noClasses: false
-    anchorLineNos: true
+    anchorLineNos: false
     codeFences: true
     guessSyntax: true
-    lineNos: true
     style: monokai
+    lineNos: true
