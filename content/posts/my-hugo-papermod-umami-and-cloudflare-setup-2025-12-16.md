@@ -1,5 +1,5 @@
 ---
-title: My Hugo + Papermod, Umami, and Cloudflare setup
+title: My Hugo + Papermod, Decap CMS, Umami, and Cloudflare setup
 date: 2025-12-16T20:20:00+11:00
 draft: true
 tags:
@@ -22,7 +22,7 @@ My problems with Ghost are such:
 1. SMTP is **required**. I'm planning on setting up a newsletter at some point (not like anyone actually cares but yk, it'd be cool), but I don't want to have to go through all of that setup and troubleshooting (I'm looking at you, smtp.mailgun.com vs smtp.mailgun.org) before I even get to make a single post. It destroys my inspiration
 2. I personally really want to self-host as much as possible. While yes, Ghost supports it, there are some major issues that I have, the first being that my router is behind CGNAT, which means Cloudflare tunnels and needing to set up nginx configs. Again, while entirely possible, I am lazy. 
 3. The other disadvantage to self hosting is that while Ghost isn't heavy, it's certainly not light. That, in addition to ideally a self-hosted tinybird instance (which for my initial run I didn't actually do - I just used the official hosting) just made it a little too much for me to stomach with my little Pentium G4400 and 8GB of DDR3 RAM. 
-4. That, and even if I was running on absolute monster of a server, I still live in Australia, and that means _at least_ [200ms](https://wondernetwork.com/pings/Paris/Sydney) of latency for every single request to Europe, and more for the US. As someone who likes my websites responsive and uninterrupted as possible (_cough cough_ cookie banners)
+4. That, and even if I was running on absolute monster of a server, I still live in Australia, and that means *at least* [200ms](https://wondernetwork.com/pings/Paris/Sydney) of latency for every single request to Europe, and more for the US. As someone who likes my websites responsive and uninterrupted as possible (*cough cough* cookie banners)
 
 So I decided to pivot, and after a little bit of googling, the name that kept popping up over and over again was Hugo, the customisable static site generator that promised to be the end to all of my problems.
 
@@ -47,7 +47,7 @@ For other systems, you can find how to install Hugo on their [website](https://g
 Next, it's as simple as 
 
 ```shell
-hugo new site MyNewBLog --format yaml
+hugo new site MyNewBlog --format yaml
 cd MyNewBlog
 git init
 git submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod
@@ -57,9 +57,13 @@ git submodule update --remote --merge # For if you want to update the theme
 
 Then, in your text editor of choice, open up the `hugo.yaml` file and add the following:
 
-```yaml {hl_lines=["4"]}
+```yaml
 baseURL: https://example.org/
 languageCode: en-us
 title: My New Hugo Site
-theme: [ "PaperMod" ]
+theme: [ "PaperMod" ] # Add this
 ```
+
+From the `MyNewBlog` directory, you should now be able to run `hugo serve -D`. If you then navigate to <http://localhost:1313>, you should now see something that looks like this:
+
+![](/uploads/screenshot-from-2025-12-17-09-16-15.png)
