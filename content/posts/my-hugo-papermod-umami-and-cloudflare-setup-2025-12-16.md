@@ -1,7 +1,7 @@
 ---
 title: My Hugo + Papermod, Decap CMS, Umami, and Cloudflare setup
 date: 2025-12-16T20:20:00+11:00
-draft: true
+draft: false
 tags:
   - how-to
 categories:
@@ -66,4 +66,215 @@ theme: [ "PaperMod" ] # Add this
 
 From the `MyNewBlog` directory, you should now be able to run `hugo serve -D`. If you then navigate to <http://localhost:1313>, you should now see something that looks like this:
 
-![](/uploads/screenshot-from-2025-12-17-09-16-15.png)
+![](/uploads/screen-shot-2025-12-27-at-07.11.47.png "Your new Hugo blog")
+
+> **Note:** You should keep `hugo serve -D` running throughout the tutorial. It will update to your changes automatically, and lets you see whatever you're working on
+> Now, clearly from here you'll have a bit more configuring to do. So let's start with some of the easier configuration.
+
+```md
+---
+title: First Post
+---
+# Hello, world
+This is my first blog post!
+```
+
+Now, to be fair, this isn't quite the kind of site that you were probably looking for. There are A LOT of config options in both Hugo and PaperMod. You can find most of the configuration options on the [PaperMod Wiki](https://github.com/adityatelange/hugo-PaperMod/wiki/Features), and the list of all of Hugo's native config options on the [Hugo Wiki](https://gohugo.io/configuration/all/) (if I'm being honest, I haven't really looked at all of the Hugo native options just yet).
+Here's *most* current config. You'll find other add-ons later, including a full config at the very end:
+
+```yaml
+baseURL: https://examplesite.com/ # Replace
+languageCode: en-us
+title: MyHugoBlog # Replace
+theme: ["PaperMod"]
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+params:
+  env: production
+  title: My Hugo Blog # Replace
+  description: "An example description" # Replace
+  keywords: [Blog, Portfolio, PaperMod]
+  author: quexeky
+  images: ["/apple-touch-icon.png"]
+  DateFormat: "January 2, 2006"
+  defaultTheme: auto # dark, light
+  disableThemeToggle: false
+
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowWordCount: false
+  ShowRssButtonInSectionTermList: true
+  UseHugoToc: true
+  disableSpecial1stPost: false
+  disableScrollToTop: false
+  comments: true
+  hidemeta: false
+  hideSummary: true
+  showtoc: true
+  tocopen: false
+
+  assets:
+    disableHLJS: true # to disable highlight.js
+    disableFingerprinting: false # Ensures that cache is updated whenever new content is added
+
+  label:
+    text: "Home"
+    icon: /apple-touch-icon.png
+    iconHeight: 35
+
+  # home-info mode
+  homeInfoParams:
+    Title: "Hi there \U0001F44B"
+    Content: | 
+      This is an example Content description # Replace
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/YOUR_GITHUB_USER" # Replace
+    - name: linkedin
+      url: "https://linkedin.com/in/YOUR_LINKEDIN_USER" # Replace
+
+  cover:
+    hidden: true # hide everywhere but not in structured data
+    hiddenInList: true # hide on list pages and home
+    hiddenInSingle: true # hide on single page
+
+
+menu:
+  main:
+    - identifier: tags
+      name: tags
+      url: /tags/
+      weight: 20
+    - identifier: search
+      name: search
+      url: /search/
+      weight: 1
+    - identifier: rss
+      name: RSS
+      url: /index.xml
+      weight: 40
+
+# Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
+pygmentsUseClasses: true
+markup:
+  highlight:
+    noClasses: false
+    anchorLineNos: false
+    codeFences: true
+    guessSyntax: true
+    style: monokai
+    lineNos: true
+```
+
+#### Setting up a GitHub Repo
+
+The final thing here that is required for a few of the later options is setting up a [GitHub](https://github.com) repo. I'm going to assume that you already have a working GitHub account with a local \[Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#using-a-personal-access-token-on-the-command-line).
+
+All you'll need for this is to go to GitHub, and click the green `New` button in the top left.
+
+![](/uploads/screenshot_20251227_085431.png)
+
+From there, ensure that it's an empty repository. Set it to public if you want to enable \[Comments with Giscus](https://blog.quexeky.dev/posts/#comments-with-giscus), set it to public. Otherwise it doesn't matter.
+
+![](/uploads/screenshot_20251227_085547.png "An example empty GitHub repository")
+
+From here it's as simple as (from your `MyNewBlog` directory):
+
+```shell
+git init .
+git add .
+git commit -m "Initial commit"
+git remote add origin http://github.com/YOUR_GITHUB_USERNAME/YOUR_GITHUB_REPO_NAME.git
+git push --set-upstream origin master # See Note
+
+# From here, if you want to update the remote, you can just run:
+git push
+```
+
+> **Note**: If you're prompted to provide a username and password here, see the [GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#using-a-personal-access-token-on-the-command-line)
+
+### Search with FuseJS
+
+One of the easiest things to add to your new blog is a [search page](/search). It requires only a few more lines of configuration, and makes the experience so much better for people looking for specific posts.
+
+The first thing you'll want to do is create a `search.md` page under the `contents` directory like so:
+
+```
+.
+└── content
+    ├── posts
+    │   └── first_post.md
+    └── search.md
+```
+
+And fill it with the following:
+
+```yaml
+---
+title: "Search" # in any language you want
+layout: "search" # necessary to enable search
+url: "/search"
+# description: "Description for Search"
+summary: "search"
+placeholder: "Hugo, Cloudflare" # The placeholder text that will appear in the search bar
+---
+```
+
+Then in your `hugo.yaml`, you can add the following under the `params` field (it works without it because PaperMod includes it by default, but I find that these settings work well):
+
+```yaml
+params:
+  # for search
+  # https://fusejs.io/api/options.html
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    ignoreLocation: true
+    limit: 10 # refer: https://www.fusejs.io/api/methods.html#search
+    keys: ["title", "permalink", "summary", "content", "tags"]
+```
+
+Now if you navigate to <https://localhost:1313/search>, you should be able to search your existing posts
+
+> **Note:** If you start seeing duplicate posts, you might have edited a post while Hugo cached it (this is the fingerprinting in the config file). You'll just have to run `hugo --cleanDestinationDir` to get rid of any duplicates. This only affects local builds though
+
+### Comments with Giscus
+
+This one here is ever so slightly more in the weeds. As a reminder though, you're always welcome to skip over any of these sections and come back to them later. The only one that really matters is having the actual Hugo site running.
+
+With that said, comments are fairly interesting, because they allow your audience to interact with you. I personally use [Giscus](https://giscus.app/), although there are many other alternatives out there, depending on your specific needs. 
+
+For some context, Giscus relies on the GitHub comments API to store comments, meaning that users need to sign in with their GitHub accounts to leave comments. I personally like this, because my target audience is people who are likely to have a GitHub account already, and this way I can prevent spam. 
+
+Regarding the actual setup, PaperMod provides us with a very easy API to enable comments. First though, we're going to need a bit of setup through the [Giscus Configuration](https://giscus.app/):
+
+1. Ensure that your repository is set to public. This should have been done in \[Setting up a GitHub Repo](https://blog.quexeky.dev/posts/my-hugo-papermod-umami-and-cloudflare-setup-2025-12-16/#setting-up-a-github-repo)
+2. Install the \[Giscus app](https://github.com/apps/giscus) by clicking \`Configure\` and then selecting your user, and then choosing your GitHub repo
+
+![](/uploads/screenshot_20251227_091617.png)
+
+3. In the `Settings` page for your repo, navigate to `General > Features` and then `Set up Discussions`
+
+``
