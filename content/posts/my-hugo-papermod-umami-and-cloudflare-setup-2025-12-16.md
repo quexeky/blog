@@ -218,7 +218,7 @@ One of the easiest things to add to your new blog is a [search page](/search). I
 The first thing you'll want to do is create a `search.md` page under the `contents` directory like so:
 
 ```
-.
+MyNewBlog
 └── content
     ├── posts
     │   └── first_post.md
@@ -260,6 +260,8 @@ Now if you navigate to <https://localhost:1313/search>, you should be able to se
 
 > **Note:** If you start seeing duplicate posts, you might have edited a post while Hugo cached it (this is the fingerprinting in the config file). You'll just have to run `hugo --cleanDestinationDir` to get rid of any duplicates. This only affects local builds though
 
+
+
 ### Comments with Giscus
 
 This one here is ever so slightly more in the weeds. As a reminder though, you're always welcome to skip over any of these sections and come back to them later. The only one that really matters is having the actual Hugo site running.
@@ -271,10 +273,51 @@ For some context, Giscus relies on the GitHub comments API to store comments, me
 Regarding the actual setup, PaperMod provides us with a very easy API to enable comments. First though, we're going to need a bit of setup through the [Giscus Configuration](https://giscus.app/):
 
 1. Ensure that your repository is set to public. This should have been done in \[Setting up a GitHub Repo](https://blog.quexeky.dev/posts/my-hugo-papermod-umami-and-cloudflare-setup-2025-12-16/#setting-up-a-github-repo)
-2. Install the \[Giscus app](https://github.com/apps/giscus) by clicking \`Configure\` and then selecting your user, and then choosing your GitHub repo
+2. Install the [Giscus app](https://github.com/apps/giscus) by clicking \`Configure\` and then selecting your user, and then choosing your GitHub repo
 
 ![](/uploads/screenshot_20251227_091617.png)
 
-3. In the `Settings` page for your repo, navigate to `General > Features` and then `Set up Discussions`
+3. In the `Settings` page for your repo, navigate to `General > Features` and then `Set up Discussions`. GitHub will prompt you to create a new discussion, which you can delete later. I personally also go through and delete all of the 
 
-``
+![](/uploads/screenshot_20251227_092257.png)
+
+4. I personally also go through and delete all of the other discussion categories and pressing the pen icon next to \`Categories\`, and rename my announcements channel to something like "Comments," so that it looks like this at the end
+
+![](/uploads/screenshot_20251227_093646.png)
+
+4. Navigate back to [Giscus](<>), and double check that when you put `YOUR_GITHUB_USERNAME/YOUR_BLOG_REPO_NAME` into the `repository:` field, it says "Success! This repository meets all of the above criteria."
+5. Configure settings. Here are my personal settings:
+
+![](/uploads/screenshot_20251227_092823.png)
+
+Almost finished. Once you're finished configuring everything, you'll be able to find a html script tag under "Enable Giscus" that looks like this:
+```html
+<script src="https://giscus.app/client.js"
+        data-repo="quexeky/MyNewBlog"
+        data-repo-id="R_kgDOQvZchg"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOQvZchs4C0RPG"
+        data-mapping="pathname"
+        data-strict="1"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>
+```
+Now you'll want to create a partials folder under layouts, and then a comments.html file under that:
+```
+
+MyNewBlog
+├── content
+│   └── posts
+│       └── first_post.md
+└── layouts
+    └── partials
+        └── comments.html
+```
+Put your entire script tag into the comments.html file, and if you navigate to <http://localhost:1313/posts/first_post.md>, you should see your comments showing up at the bottom of your post!
