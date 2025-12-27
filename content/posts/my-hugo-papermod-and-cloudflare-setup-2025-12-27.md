@@ -4,11 +4,16 @@ date: 2025-12-27T12:00:00+11:00
 description: A documentation of all of how I set up my personal blog, complete
   with all of the bells and whistles
 draft: false
+cover:
+  image: /images/hugo.svg
+  alt: "The gohugo logo "
+  caption: The gohugo logo
 tags:
   - how-to
   - hugo
 categories:
   - Technical
+showToc: true
 ---
 ## Why not Ghost?
 
