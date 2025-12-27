@@ -48,7 +48,7 @@ collections:
         fields:
           - {label: "Image", name: "image", widget: "image"}
           - {label: "Alt Text", name: "alt", widget: "string"}
-          - {label: "Caption", name: "caption", widget: "string"}
+          - {label: "Caption", name: "caption", widget: "string", required: false}
           - {label: "Relative Path", name: "relative", widget: "hidden", default: true}
 
       - {label: "Tags", name: "tags", widget: "list", required: false}
