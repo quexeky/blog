@@ -29,8 +29,6 @@ collections:
     preview_path: "posts/{{title}}-{{year}}-{{month}}-{{day}}"
     preview_path_date_field: date
 
-    filter: { field: "ignore", value: false }
-
     editor:
       preview: true
     
@@ -40,7 +38,6 @@ collections:
       - {label: "Description", name: "description", widget: "string", hint: "Used for SEO and post summaries"}
       - {label: "Draft", name: "draft", widget: "boolean", default: true}
       
-      # Added Cover Image Support for PaperMod
       - label: "Cover Image"
         name: "cover"
         widget: "object"
