@@ -1,8 +1,7 @@
 ---
 title: My Hugo + Papermod and Cloudflare setup
 date: 2025-12-27T12:00:00+11:00
-description: A documentation of all of how I set up my personal blog, complete
-  with all of the bells and whistles
+description: A write-up of my Hugo + PaperMod and Cloudflare setup, including some base-level configuration
 draft: false
 cover:
   image: /images/hugo.svg
@@ -25,16 +24,17 @@ I was then shot 57 times.
 
 My problems with Ghost are such:
 
-1. SMTP is **required**. I'm planning on setting up a newsletter at some point (not like anyone actually cares but yk, it'd be cool), but I don't want to have to go through all of that setup and troubleshooting (I'm looking at you, smtp.mailgun.com vs smtp.mailgun.org) before I even get to make a single post. It destroys my inspiration
-2. I personally really want to self-host as much as possible. While yes, Ghost supports it, there are some major issues that I have, the first being that my router is behind CGNAT, which means Cloudflare tunnels and needing to set up nginx configs. Again, while entirely possible, I am lazy. 
+1. SMTP is **required**. I'm planning on setting up a newsletter at some point (not like anyone actually cares but yk, it'd be cool), but I don't want to have to go through all of that setup and troubleshooting (I'm looking at you, smtp.mailgun.com vs smtp.mailgun.org) before I even get to make a single post. It destroys my motivation
+2. I personally really want to self-host / be in control of as much as possible. While yes, Ghost supports it, there are some major issues that I have, the first being that my router is behind CGNAT, which means to actually open it up to the werb, I'd need Cloudflare tunnels and nginx configs. Again, while very possible, I am lazy (when it comes to networking, at least). 
 3. The other disadvantage to self hosting is that while Ghost isn't heavy, it's certainly not light. That, in addition to ideally a self-hosted tinybird instance (which for my initial run I didn't actually do - I just used the official hosting) just made it a little too much for me to stomach with my little Pentium G4400 and 8GB of DDR3 RAM. 
-4. That, and even if I was running on absolute monster of a server, I still live in Australia, and that means [*at least* 200ms of latency](https://wondernetwork.com/pings/Paris/Sydney) for every single request to Europe, and more for the US. As someone who likes my websites responsive and uninterrupted as possible (*cough cough* cookie banners)
+4. That, and even if I was running on absolute monster of a server, I still live in Australia, and that means [*at least* 200ms of latency](https://wondernetwork.com/pings/Paris/Sydney) for every single request to Europe, and more for the US. As someone who likes my websites responsive and uninterrupted as possible (*cough cough* cookie banners), that's just not going to cut it
+5. I sort of mentioned this before too, but Ghost is not light, which means that it's also a lot of content to actualy send. I like my websites loading as quickly as possible, which is what I've tried to set up here. You can find more in a post that is Coming Soon™
 
 So I decided to pivot, and after a little bit of googling, the name that kept popping up over and over again was Hugo, the customisable static site generator that promised to be the end to all of my problems.
 
 ## The actual setup
 
-I'm going to split this up into different sections so that you don't actually have use all of them, because I mean, it's not like they actually interact. The only one that's really necessary is Hugo + PaperMod for the specific configurations, but most themes have their own ways to add headers and partials, which is really all that you need.
+I'm going to split this up into different sections so that you don't actually have use all of them, because I mean, it's not like they actually interact. The only one that's really necessary is Hugo + PaperMod for the specific configurations, but most themes have their own ways to add headers and partials, which is really all that you need. So this will work with the vast majority of Hugo themes, as long as you're willing to dive through a bit more documentation
 
 > **Note**: This isn't my full setup. I also use Umami for analytics and am currently planning on using listmonk for a newsletter, but you'll be able to find those in separate posts, as this one is rather long
 
