@@ -311,7 +311,7 @@ Almost finished. Once you're finished configuring everything, you'll be able to 
 </script>
 ```
 
-> Note: I personally replace the `async` with `defer` to ensure that loading remains consistent. [Read More](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_is_JavaScript#script_loading_strategies)
+> Note: I personally replace the `async` with `defer` to ensure that loading remains consistent. Find out more on the [Mozilla Docs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_is_JavaScript#script_loading_strategies)
 
 Now you'll want to create a partials folder under layouts, and then a comments.html file under that:
 
