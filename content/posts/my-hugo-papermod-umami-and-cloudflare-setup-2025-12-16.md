@@ -1,5 +1,5 @@
 ---
-title: My Hugo + Papermod, Decap CMS, Umami, and Cloudflare setup
+title: My Hugo + Papermod and Cloudflare setup
 date: 2025-12-16T20:20:00+11:00
 draft: false
 tags:
@@ -22,7 +22,7 @@ My problems with Ghost are such:
 1. SMTP is **required**. I'm planning on setting up a newsletter at some point (not like anyone actually cares but yk, it'd be cool), but I don't want to have to go through all of that setup and troubleshooting (I'm looking at you, smtp.mailgun.com vs smtp.mailgun.org) before I even get to make a single post. It destroys my inspiration
 2. I personally really want to self-host as much as possible. While yes, Ghost supports it, there are some major issues that I have, the first being that my router is behind CGNAT, which means Cloudflare tunnels and needing to set up nginx configs. Again, while entirely possible, I am lazy. 
 3. The other disadvantage to self hosting is that while Ghost isn't heavy, it's certainly not light. That, in addition to ideally a self-hosted tinybird instance (which for my initial run I didn't actually do - I just used the official hosting) just made it a little too much for me to stomach with my little Pentium G4400 and 8GB of DDR3 RAM. 
-4. That, and even if I was running on absolute monster of a server, I still live in Australia, and that means *at least* [200ms](https://wondernetwork.com/pings/Paris/Sydney) of latency for every single request to Europe, and more for the US. As someone who likes my websites responsive and uninterrupted as possible (*cough cough* cookie banners)
+4. That, and even if I was running on absolute monster of a server, I still live in Australia, and that means [*at least* 200ms of latency](https://wondernetwork.com/pings/Paris/Sydney) for every single request to Europe, and more for the US. As someone who likes my websites responsive and uninterrupted as possible (*cough cough* cookie banners)
 
 So I decided to pivot, and after a little bit of googling, the name that kept popping up over and over again was Hugo, the customisable static site generator that promised to be the end to all of my problems.
 
@@ -30,13 +30,15 @@ So I decided to pivot, and after a little bit of googling, the name that kept po
 
 I'm going to split this up into different sections so that you don't actually have use all of them, because I mean, it's not like they actually interact. The only one that's really necessary is Hugo + PaperMod for the specific configurations, but most themes have their own ways to add headers and partials, which is really all that you need.
 
+> **Note**: This isn't my full setup. I also use Umami for analytics and am currently planning on using listmonk for a newsletter, but you'll be able to find those in separate posts, as this one is rather long
+
 ### Hugo + PaperMod
 
 For a local instance of Hugo (I'm going to omit the "+ PaperMod" now), you'll first need to install it. Personally, I use NixOS, and it was as simple as adding:
 
 ```lua
-environment.systemPackages = with pkgs; [\
-  hugo\
+environment.systemPackages = with pkgs; [
+  hugo
 ];
 ```
 
@@ -260,8 +262,6 @@ Now if you navigate to <https://localhost:1313/search>, you should be able to se
 
 > **Note:** If you start seeing duplicate posts, you might have edited a post while Hugo cached it (this is the fingerprinting in the config file). You'll just have to run `hugo --cleanDestinationDir` to get rid of any duplicates. This only affects local builds though
 
-
-
 ### Comments with Giscus
 
 This one here is ever so slightly more in the weeds. As a reminder though, you're always welcome to skip over any of these sections and come back to them later. The only one that really matters is having the actual Hugo site running.
@@ -291,6 +291,7 @@ Regarding the actual setup, PaperMod provides us with a very easy API to enable 
 ![](/uploads/screenshot_20251227_092823.png)
 
 Almost finished. Once you're finished configuring everything, you'll be able to find a html script tag under "Enable Giscus" that looks like this:
+
 ```html
 <script src="https://giscus.app/client.js"
         data-repo="quexeky/MyNewBlog"
@@ -309,9 +310,12 @@ Almost finished. Once you're finished configuring everything, you'll be able to 
         async>
 </script>
 ```
-Now you'll want to create a partials folder under layouts, and then a comments.html file under that:
-```
 
+> Note: I personally replace the `async` with `defer` to ensure that loading remains consistent [Read More](https://dev.to/fidalmathew/async-vs-defer-in-javascript-which-is-better-26gm)
+
+Now you'll want to create a partials folder under layouts, and then a comments.html file under that:
+
+```
 MyNewBlog
 ├── content
 │   └── posts
@@ -320,4 +324,76 @@ MyNewBlog
     └── partials
         └── comments.html
 ```
+
 Put your entire script tag into the comments.html file, and if you navigate to <http://localhost:1313/posts/first_post.md>, you should see your comments showing up at the bottom of your post!
+
+#### Optional: Moving giscus settings to hugo.yaml
+
+If you'd like to keep all of your settings in the hugo.yaml file, you can instead replace the existing script tag with
+
+```html
+<script src="https://giscus.app/client.js"
+        data-repo="{{ .Site.Params.giscus.repo }}"
+        data-repo-id="{{ .Site.Params.giscus.repoID }}"
+        data-category="{{ .Site.Params.giscus.category }}"
+        data-category-id="{{ .Site.Params.giscus.categoryID }}"
+        data-strict="{{ .Site.Params.giscus.dataStrict }}"
+        data-reactions-enabled="{{ .Site.Params.giscus.reactionsEnabled }}"
+        data-mapping="{{ .Site.Params.giscus.mapping }}"
+        data-emit-metadata="{{ .Site.Params.giscus.emitMetadata }}"
+        data-input-position="{{ .Site.Params.giscus.inputPosition }}"
+        data-theme="{{ .Site.Params.giscus.theme }}"
+        data-lang="{{ .Site.Params.giscus.lang }}"
+        data-loading="{{ .Site.Params.giscus.loading }}"
+        crossorigin="{{ .Site.Params.giscus.crossorigin }}"
+        defer>
+</script>
+```
+
+Ensure that each of your own settings is accounted for in case it's different. For each variable, the syntax is as follows:
+
+```html
+<script
+        variable-name="{{ .Site.Params.giscus.variableName }}"
+        >
+<script/>
+```
+
+Then, in your `hugo.yaml` you can add the following:
+
+```yaml
+params:
+   giscus:
+     repo: quexeky/MyNewBlog
+     repoID: R_kgDOQvZchg
+     category: Announcements
+     categoryID: DIC_kwDOQvZchs4C0RPG
+     mapping: pathname
+     reactionsEnabled: 1
+     emitMetadata: 0
+     inputPosition: top
+     theme: preferred_color_scheme
+     lang: en
+     loading: lazy
+     crossorigin: anonymous
+```
+
+This should just map all of the config options to the original script tag
+
+### Cloudflare Hosting
+
+So you've got your blog on your local machine. Now what? You're not exactly going to get much reach by having you be the only person who can read your blog, are you?
+
+So in comes Cloudflare, one of the largest global Content Delivery Networks (CDNs), specifically with their incredible free tier. Again, there are alternatives to this. GitHub Pages especially comes to mind, as well as Vercel and Netlify. But for how spectacular Cloudflare is, especially with their Free plan, I just can't find any other reasonable alternative.
+
+For this, I'm going to assume that you already have a domain set up with Cloudflare. If you don't, you can [find more here](https://developers.cloudflare.com/registrar/get-started/register-domain/).
+
+Once that's all set up, head over to [Cloudflare Pages](https://dash.cloudflare.com/?to=/:account/pages/new/provider/github) to link your GitHub account, select a repository
+
+![](/uploads/screenshot_20251227_120101.png)
+
+Once you've begun setup, you can choose the branch to deploy from (if you've been following along, that should be `master`), make sure that the framework preset is set to `Hugo`, the build command to `hugo --minify`, and the output directory to `public`. You don't need any environment variables just yet (although if you had set up Decap CMS already, this would be where you *could* put your secrets. Don't worry about that if not)
+
+![](/uploads/screenshot_20251227_120658.png)
+
+Click `Save and Deploy`, wait for it to build, and your site is live! I would highly recommend adding a custom domain too (accessible either through the screen immediately visible after you've deployed, or under the `Custom Domains` tab, at which point you can just put in something like `blog.example.com` (or whatever your domain is), give it a few minutes, and you're off to the races. Everyone on Earth can now see what you post by going to whatever site you put into that menu. Congratulations!
