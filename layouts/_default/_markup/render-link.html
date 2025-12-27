@@ -1,0 +1,16 @@
+<a href="{{ .Destination | safeURL }}" 
+   {{ with .Title }} title="{{ . }}" {{ end }} 
+   {{ if strings.HasPrefix .Destination "http" }} 
+      target="_blank" rel="noopener noreferrer" 
+      data-umami-event="Outbound Link Click"
+      data-umami-event-url="{{ .Destination }}"
+      data-umami-event-source="{{ .Page.RelPermalink }}"
+      {{ with .Page.Params.tags }}
+        data-umami-event-tags="|{{ delimit . "|" }}|"
+      {{ end }}
+      {{ with .Page.Params.categories }}
+        data-umami-event-categories="{{ delimit . "|" }}"
+      {{ end }}      
+   {{ end }}>
+   {{ .Text | safeHTML }}
+</a>

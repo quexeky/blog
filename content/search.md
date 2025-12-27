@@ -2,7 +2,7 @@
 title: "Search" # in any language you want
 layout: "search" # necessary for search
 url: "/search"
-# description: "Description for Search"
+description: "Search for post titles, contents, tags, categories, etc"
 summary: "search"
-placeholder: "placeholder text in search input box"
+placeholder: "e.g. Technical, how-to"
 ---

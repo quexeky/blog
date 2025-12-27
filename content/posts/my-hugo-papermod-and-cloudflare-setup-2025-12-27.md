@@ -4,6 +4,7 @@ date: 2025-12-27T12:00:00+11:00
 draft: false
 tags:
   - how-to
+  - hugo
 categories:
   - Technical
 description: A documentation of all of how I set up my personal blog, complete
@@ -68,7 +69,7 @@ theme: [ "PaperMod" ] # Add this
 
 From the `MyNewBlog` directory, you should now be able to run `hugo serve -D`. If you then navigate to <http://localhost:1313>, you should now see something that looks like this:
 
-![](/uploads/screen-shot-2025-12-27-at-07.11.47.png "Your new Hugo blog")
+![](/images/screen-shot-2025-12-27-at-07.11.47.png "Your new Hugo blog")
 
 > **Note:** You should keep `hugo serve -D` running throughout the tutorial. It will update to your changes automatically, and lets you see whatever you're working on
 > Now, clearly from here you'll have a bit more configuring to do. So let's start with some of the easier configuration.
@@ -192,11 +193,11 @@ The final thing here that is required for a few of the later options is setting 
 
 All you'll need for this is to go to GitHub, and click the green `New` button in the top left.
 
-![](/uploads/screenshot_20251227_085431.png)
+![](/images/screenshot_20251227_085431.png)
 
 From there, ensure that it's an empty repository. Set it to public if you want to enable [Comments with Giscus](https://blog.quexeky.dev/posts/#comments-with-giscus), set it to public. Otherwise it doesn't matter.
 
-![](/uploads/screenshot_20251227_085547.png "An example empty GitHub repository")
+![](/images/screenshot_20251227_085547.png "An example empty GitHub repository")
 
 From here it's as simple as (from your `MyNewBlog` directory):
 
@@ -275,20 +276,20 @@ Regarding the actual setup, PaperMod provides us with a very easy API to enable 
 1. Ensure that your repository is set to public. This should have been done in [Setting up a GitHub Repo](https://blog.quexeky.dev/posts/my-hugo-papermod-umami-and-cloudflare-setup-2025-12-16/#setting-up-a-github-repo)
 2. Install the [Giscus app](https://github.com/apps/giscus) by clicking `Configure` and then selecting your user, and then choosing your GitHub repo
 
-![](/uploads/screenshot_20251227_091617.png)
+![](/images/screenshot_20251227_091617.png)
 
 3. In the `Settings` page for your repo, navigate to `General > Features` and then `Set up Discussions`. GitHub will prompt you to create a new discussion, which you can delete later. I personally also go through and delete all of the 
 
-![](/uploads/screenshot_20251227_092257.png)
+![](/images/screenshot_20251227_092257.png)
 
 4. I personally also go through and delete all of the other discussion categories and pressing the pen icon next to `Categories`, and rename my announcements channel to something like "Comments," so that it looks like this at the end
 
-![](/uploads/screenshot_20251227_093646.png)
+![](/images/screenshot_20251227_093646.png)
 
 4. Navigate back to [Giscus](<>), and double check that when you put `YOUR_GITHUB_USERNAME/YOUR_BLOG_REPO_NAME` into the `repository:` field, it says "Success! This repository meets all of the above criteria."
 5. Configure settings. Here are my personal settings:
 
-![](/uploads/screenshot_20251227_092823.png)
+![](/images/screenshot_20251227_092823.png)
 
 Almost finished. Once you're finished configuring everything, you'll be able to find a html script tag under "Enable Giscus" that looks like this:
 
@@ -390,10 +391,10 @@ For this, I'm going to assume that you already have a domain set up with Cloudfl
 
 Once that's all set up, head over to [Cloudflare Pages](https://dash.cloudflare.com/?to=/:account/pages/new/provider/github) to link your GitHub account, select a repository
 
-![](/uploads/screenshot_20251227_120101.png)
+![](/images/screenshot_20251227_120101.png)
 
 Once you've begun setup, you can choose the branch to deploy from (if you've been following along, that should be `master`), make sure that the framework preset is set to `Hugo`, the build command to `hugo --minify`, and the output directory to `public`. You don't need any environment variables just yet (although if you had set up Decap CMS already, this would be where you *could* put your secrets. Don't worry about that if not)
 
-![](/uploads/screenshot_20251227_120658.png)
+![](/images/screenshot_20251227_120658.png)
 
 Click `Save and Deploy`, wait for it to build, and your site is live! I would highly recommend adding a custom domain too (accessible either through the screen immediately visible after you've deployed, or under the `Custom Domains` tab, at which point you can just put in something like `blog.example.com` (or whatever your domain is), give it a few minutes, and you're off to the races. Everyone on Earth can now see what you post by going to whatever site you put into that menu. Congratulations!

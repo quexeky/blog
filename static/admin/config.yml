@@ -15,8 +15,8 @@ backend:
 
 locale: 'en'
 
-media_folder: "static/uploads"
-public_folder: "/uploads"
+media_folder: "assets/images"
+public_folder: "/images"
 
 collections:
   - name: "posts"

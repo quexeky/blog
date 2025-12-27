@@ -1,40 +1,43 @@
 {{- $u := .Destination -}}
 {{- $img := "" -}}
 
-{{- /* 1. Try to find as a Page Resource (same folder as .md) */ -}}
+{{- /* Try to find as a Page Resource */ -}}
 {{- $img = .Page.Resources.GetMatch $u -}}
 
-{{- /* 2. If not found, try to find in the assets/ directory */ -}}
+{{- /* Try Assets directory */ -}}
 {{- if not $img -}}
-  {{- $img = resources.Get $u -}}
+    {{- $img = resources.Get $u -}}
 {{- end -}}
 
-{{- /* 3. If still not found and it's a remote URL, try GetRemote */ -}}
+{{- /* Try Remote */ -}}
 {{- if and (not $img) (findRE "^https?://" $u) -}}
-  {{- $img = resources.GetRemote $u -}}
+    {{- $img = resources.GetRemote $u -}}
 {{- end -}}
 
 {{- if $img -}}
-    {{- /* Your existing resizing logic */ -}}
-    {{- $startTag := "div" -}}
+    {{- $tagName := "div" -}}
     {{- if eq .Title "center" -}}
-        {{- $startTag = "figure" -}}
+        {{- $tagName = "figure" -}}
     {{- end -}}
 
-    <{{ $startTag }} class="post-img-container">
-        {{- if gt $img.Width 1200 -}}
-            {{- $img = $img.Resize "1200x webp" -}}
-        {{- else -}}
-            {{- $img = $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
-        {{- end -}}
+    {{- /* Process Image */ -}}
+    {{- if gt $img.Width 1200 -}}
+        {{- $img = $img.Resize "1200x webp" -}}
+    {{- else -}}
+        {{- $img = $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
+    {{- end -}}
 
-        <img loading="lazy" src="{{ $img.RelPermalink }}" alt="{{ .Text }}" width="{{ $img.Width }}" height="{{ $img.Height }}">
-
+    {{- /* Use printf and safeHTML to prevent the < > from being escaped */ -}}
+    {{ printf "<%s class=\"post-img-container\">" $tagName | safeHTML }}
+        <img loading="lazy" 
+            src="{{ $img.RelPermalink }}" 
+            alt="{{ .Text }}" 
+            width="{{ $img.Width }}" 
+            height="{{ $img.Height }}">
         {{- if .Title -}}
             <figcaption>{{ .Title }}</figcaption>
         {{- end -}}
-    </{{ $startTag }}>
+    {{ printf "</%s>" $tagName | safeHTML }}
 {{- else -}}
-    {{- /* Fallback: Simple img tag for paths Hugo can't process (like /static/ or broken links) */ -}}
     <img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" title="{{ .Title }}">
 {{- end -}}
