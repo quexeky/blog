@@ -46,7 +46,7 @@ params:
   tocopen: false
 
   assets:
-    disableHLJS: false
+    disableHLJS: true
     disableFingerprinting: false
 
   label:
@@ -97,10 +97,11 @@ params:
     mapping: pathname
     reactionsEnabled: 1
     emitMetadata: 0
-    inputPosition: bottom
-    theme: light
+    inputPosition: top
+    theme: preferred_color_scheme
     lang: en
     loading: lazy
+    crossorigin: anonymous
 
 
 menu:

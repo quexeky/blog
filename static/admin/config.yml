@@ -21,37 +21,44 @@ public_folder: "/images"
 collections:
   - name: "posts"
     label: "Posts"
+    label_singular: "Post"
     folder: "content/posts"
     create: true
-    slug: "{{slug}}-{{year}}-{{month}}-{{day}}"
+
+    path: "{{slug}}--{{year}}-{{month}}-{{day}}/index"
+    preview_path: "posts/{{title}}-{{year}}-{{month}}-{{day}}"
+    preview_path_date_field: date
+
+    filter: { field: "ignore", value: false }
 
     editor:
       preview: true
     
     fields:
-      - label: "Title"
-        name: "title"
-        widget: "string"
-      - label: "Publish Date"
-        name: "date"
-        widget: "datetime"
-        format: "YYYY-MM-DDTHH:mm:ssZ"
-        picker_utc: false
-      - label: "Draft" 
-        name: "draft" 
-        widget: "boolean" 
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Publish Date", name: "date", widget: "datetime", format: "YYYY-MM-DDTHH:mm:ssZ"}
+      - {label: "Description", name: "description", widget: "string", hint: "Used for SEO and post summaries"}
+      - {label: "Draft", name: "draft", widget: "boolean", default: true}
+      
+      # Added Cover Image Support for PaperMod
+      - label: "Cover Image"
+        name: "cover"
+        widget: "object"
+        required: false
+        fields:
+          - {label: "Image", name: "image", widget: "image"}
+          - {label: "Alt Text", name: "alt", widget: "string"}
+          - {label: "Caption", name: "caption", widget: "string"}
+          - {label: "Relative Path", name: "relative", widget: "hidden", default: true}
+
+      - {label: "Tags", name: "tags", widget: "list", required: false}
+      - {label: "Categories", name: "categories", widget: "list", required: false}
+      
+      - label: "Show TOC"
+        name: "showToc"
+        widget: "boolean"
         default: true
-      - label: "Tags"
-        name: "tags"
-        widget: "list"
         required: false
-      - label: "Categories"
-        name: "categories"
-        widget: "list"
-        required: false
-      - label: 'Description'
-        name: 'description'
-        widget: 'string'
-      - label: "Body"
-        name: "body"
-        widget: "markdown"
+        hint: "Override global Table of Contents setting"
+
+      - {label: "Body", name: "body", widget: "markdown"}

@@ -1,1 +1,11 @@
 <script defer src="https://info.quexeky.dev/getinfo" data-website-id="dfb9122c-ce42-4ee8-a95e-67b1cf613e8d"></script>
+
+{{- if .IsPage -}}
+{{- $images := .Resources.ByType "image" -}}
+{{- $contentImg := findRE "<img src=\"([^\"]+)\"" .Content 1 -}} {{- if $images -}} <meta property="og:image"
+    content="{{ (index $images 0).Permalink }}">
+{{- else if $contentImg -}}
+{{- $url := index $contentImg 0 | replaceRE "<img src=\"" "" | replaceRE "\"" "" -}}
+    <meta property=" og:image" content="{{ $url | absURL }}">
+{{- end -}}
+{{- end -}}
