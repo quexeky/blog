@@ -26,7 +26,7 @@ collections:
     create: true
 
     path: "{{slug}}--{{year}}-{{month}}-{{day}}/index"
-    preview_path: "posts/{{title}}-{{year}}-{{month}}-{{day}}"
+    preview_path: "posts/{{title}}--{{year}}-{{month}}-{{day}}"
     preview_path_date_field: date
 
     editor:
