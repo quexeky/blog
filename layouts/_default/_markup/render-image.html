@@ -1,31 +1,40 @@
 {{- $u := .Destination -}}
-{{- $img := .Page.Resources.GetMatch $u -}}
+{{- $img := "" -}}
+
+{{- /* 1. Try to find as a Page Resource (same folder as .md) */ -}}
+{{- $img = .Page.Resources.GetMatch $u -}}
+
+{{- /* 2. If not found, try to find in the assets/ directory */ -}}
 {{- if not $img -}}
-{{- $img = resources.GetRemote $u -}}
+  {{- $img = resources.Get $u -}}
+{{- end -}}
+
+{{- /* 3. If still not found and it's a remote URL, try GetRemote */ -}}
+{{- if and (not $img) (findRE "^https?://" $u) -}}
+  {{- $img = resources.GetRemote $u -}}
 {{- end -}}
 
 {{- if $img -}}
-{{- $startTag := "div" -}}
-{{- if eq .Title "center" -}}
-{{- $startTag = "figure" -}}
-{{- end -}}
-
-<{{ $startTag }} class="post-img-container">
-    {{- /* Resize large images to max 1200px wide */ -}}
-    {{- if gt $img.Width 1200 -}}
-    {{- $img = $img.Resize "1200x webp" -}}
-    {{- else -}}
-    {{- $img = $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
+    {{- /* Your existing resizing logic */ -}}
+    {{- $startTag := "div" -}}
+    {{- if eq .Title "center" -}}
+        {{- $startTag = "figure" -}}
     {{- end -}}
 
-    <img loading="lazy" src="{{ $img.RelPermalink }}" alt="{{ .Text }}" width="{{ $img.Width }}"
-        height="{{ $img.Height }}">
+    <{{ $startTag }} class="post-img-container">
+        {{- if gt $img.Width 1200 -}}
+            {{- $img = $img.Resize "1200x webp" -}}
+        {{- else -}}
+            {{- $img = $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
+        {{- end -}}
 
-    {{- if .Title -}}
-    <figcaption>{{ .Title }}</figcaption>
-    {{- end -}}
-</{{ $startTag }}>
+        <img loading="lazy" src="{{ $img.RelPermalink }}" alt="{{ .Text }}" width="{{ $img.Width }}" height="{{ $img.Height }}">
+
+        {{- if .Title -}}
+            <figcaption>{{ .Title }}</figcaption>
+        {{- end -}}
+    </{{ $startTag }}>
 {{- else -}}
-{{- /* Fallback for external images that can't be processed */ -}}
-<img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" title="{{ .Title }}">
+    {{- /* Fallback: Simple img tag for paths Hugo can't process (like /static/ or broken links) */ -}}
+    <img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" title="{{ .Title }}">
 {{- end -}}

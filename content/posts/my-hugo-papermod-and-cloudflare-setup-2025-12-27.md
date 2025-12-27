@@ -1,6 +1,6 @@
 ---
 title: My Hugo + Papermod and Cloudflare setup
-date: 2025-12-16T20:20:00+11:00
+date: 2025-12-27T12:00:00+11:00
 draft: false
 tags:
   - how-to
@@ -188,13 +188,13 @@ markup:
 
 #### Setting up a GitHub Repo
 
-The final thing here that is required for a few of the later options is setting up a [GitHub](https://github.com) repo. I'm going to assume that you already have a working GitHub account with a local \[Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#using-a-personal-access-token-on-the-command-line).
+The final thing here that is required for a few of the later options is setting up a [GitHub](https://github.com) repo. I'm going to assume that you already have a working GitHub account with a local [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#using-a-personal-access-token-on-the-command-line).
 
 All you'll need for this is to go to GitHub, and click the green `New` button in the top left.
 
 ![](/uploads/screenshot_20251227_085431.png)
 
-From there, ensure that it's an empty repository. Set it to public if you want to enable \[Comments with Giscus](https://blog.quexeky.dev/posts/#comments-with-giscus), set it to public. Otherwise it doesn't matter.
+From there, ensure that it's an empty repository. Set it to public if you want to enable [Comments with Giscus](https://blog.quexeky.dev/posts/#comments-with-giscus), set it to public. Otherwise it doesn't matter.
 
 ![](/uploads/screenshot_20251227_085547.png "An example empty GitHub repository")
 
@@ -272,8 +272,8 @@ For some context, Giscus relies on the GitHub comments API to store comments, me
 
 Regarding the actual setup, PaperMod provides us with a very easy API to enable comments. First though, we're going to need a bit of setup through the [Giscus Configuration](https://giscus.app/):
 
-1. Ensure that your repository is set to public. This should have been done in \[Setting up a GitHub Repo](https://blog.quexeky.dev/posts/my-hugo-papermod-umami-and-cloudflare-setup-2025-12-16/#setting-up-a-github-repo)
-2. Install the [Giscus app](https://github.com/apps/giscus) by clicking \`Configure\` and then selecting your user, and then choosing your GitHub repo
+1. Ensure that your repository is set to public. This should have been done in [Setting up a GitHub Repo](https://blog.quexeky.dev/posts/my-hugo-papermod-umami-and-cloudflare-setup-2025-12-16/#setting-up-a-github-repo)
+2. Install the [Giscus app](https://github.com/apps/giscus) by clicking `Configure` and then selecting your user, and then choosing your GitHub repo
 
 ![](/uploads/screenshot_20251227_091617.png)
 
@@ -281,7 +281,7 @@ Regarding the actual setup, PaperMod provides us with a very easy API to enable 
 
 ![](/uploads/screenshot_20251227_092257.png)
 
-4. I personally also go through and delete all of the other discussion categories and pressing the pen icon next to \`Categories\`, and rename my announcements channel to something like "Comments," so that it looks like this at the end
+4. I personally also go through and delete all of the other discussion categories and pressing the pen icon next to `Categories`, and rename my announcements channel to something like "Comments," so that it looks like this at the end
 
 ![](/uploads/screenshot_20251227_093646.png)
 
@@ -311,7 +311,7 @@ Almost finished. Once you're finished configuring everything, you'll be able to 
 </script>
 ```
 
-> Note: I personally replace the `async` with `defer` to ensure that loading remains consistent [Read More](https://dev.to/fidalmathew/async-vs-defer-in-javascript-which-is-better-26gm)
+> Note: I personally replace the `async` with `defer` to ensure that loading remains consistent. [Read More](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_is_JavaScript#script_loading_strategies)
 
 Now you'll want to create a partials folder under layouts, and then a comments.html file under that:
 
