@@ -1,0 +1,14 @@
+.zoomable {
+    cursor: zoom-in;
+}
+
+.medium-zoom-overlay {
+    z-index: 9998;
+}
+
+.medium-zoom-image--opened {
+    z-index: 9999;
+    /* Reset existing CSS when zoomed */
+    max-height: none !important; 
+    border: none !important;
+}

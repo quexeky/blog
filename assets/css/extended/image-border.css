@@ -3,9 +3,13 @@
     margin-left: auto;
     margin-right: auto;
 
-
+    /* Maintain aspect ratio to ensure that it doesn't clash with render-image.html */
     max-height: 50vh;
+    max-width: 100%;
     width: auto;
+    height: auto;
+
+    object-fit: contain;
 
     border: 2px solid var(--border);
     border-radius: 8px;

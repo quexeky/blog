@@ -1,36 +1,28 @@
 {{- $u := .Destination -}}
 {{- $img := "" -}}
-
-{{- /* Try to find as a Page Resource */ -}}
 {{- $img = .Page.Resources.GetMatch $u -}}
-
-{{- /* Try Assets directory */ -}}
-{{- if not $img -}}
-    {{- $img = resources.Get $u -}}
-{{- end -}}
-
-{{- /* Try Remote */ -}}
-{{- if and (not $img) (findRE "^https?://" $u) -}}
-    {{- $img = resources.GetRemote $u -}}
-{{- end -}}
+{{- if not $img -}}{{- $img = resources.Get $u -}}{{- end -}}
+{{- if and (not $img) (findRE "^https?://" $u) -}}{{- $img = resources.GetRemote $u -}}{{- end -}}
 
 {{- if $img -}}
     {{- $tagName := "div" -}}
-    {{- if eq .Title "center" -}}
-        {{- $tagName = "figure" -}}
-    {{- end -}}
+    {{- if eq .Title "center" -}}{{- $tagName = "figure" -}}{{- end -}}
+    
+    {{- /* Store original path */ -}}
+    {{- $original := $img.RelPermalink -}}
 
-    {{- /* Process Image */ -}}
+    {{- /* Process display version */ -}}
     {{- if gt $img.Width 1200 -}}
         {{- $img = $img.Resize "1200x webp" -}}
     {{- else -}}
         {{- $img = $img.Resize (printf "%dx%d webp" $img.Width $img.Height) -}}
     {{- end -}}
 
-    {{- /* Use printf and safeHTML to prevent the < > from being escaped */ -}}
     {{ printf "<%s class=\"post-img-container\">" $tagName | safeHTML }}
         <img loading="lazy" 
             src="{{ $img.RelPermalink }}" 
+            data-zoom-src="{{ $original }}"
+            class="zoomable"
             alt="{{ .Text }}" 
             width="{{ $img.Width }}" 
             height="{{ $img.Height }}">
