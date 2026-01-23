@@ -30,3 +30,4 @@ And then back to school it was. I'd "just" started Year 12 (final year of High S
 * Offline mode and caching (really it was just caching, and then we realised that we could just keep using cached data if the server wouldn't connect. It really needed / needs improvement)
 * And a bunch of bug fixes
 * Started actually using PRs (occasionally)
+* Got quite a few people contributing, both code and
