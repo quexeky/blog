@@ -31,3 +31,14 @@ In the process of implementing this, the major problem that I'm having is that o
 
 1. How should the frame header be sized? So far I like the idea of having an exactly 64 bit header, however that may become difficult considering how much data is taken up by the Sequence ID (currently 28 bits) and the magic bytes (currently 16 bits), leaving me with only 20 bits to work with.
 2. Should I include payload length in my header? I believe so, for the sake of forwards compatibility (being able to mark a message as X bytes long comes in useful if you don't actually know the command), but it seems like a bit of a waste of space if the payloads are of a known length, defined by the protocol itself.
+
+
+
+So far my conclusion to this gives a packet defined as such:
+
+1. Magic bytes: 16 bits for a pair of magic synchronisation bytes. Any pair of bytes like these will be assumed to mark the beginning of a frame, which is useful for synchronisation, although it does mean that any similar bytes will have to be escaped (this is why I'm using 16 bits instead of just 8). Note that these are considered to be a prefix rather than necessarily part of the header itself, and so isn't counted towards the length of the parsed frame header  
+2. Frame Header: A fixed length segment of a packet that defines what will be read. This contains:
+
+   * Major Version (4 bits): The major version of the sender. Useful for allowing custom definitions.
+   * Frame type (4 bits): To allow various types of frames, such as REQUEST (a consumer requesting data from a server), RESPONSE (a server providing a response), and PUBLISH (a packet in a continuous stream of data that does not require REQUESTs)
+   * Flag (4 bits): Allows
