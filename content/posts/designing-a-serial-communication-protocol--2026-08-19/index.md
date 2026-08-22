@@ -41,4 +41,9 @@ So far my conclusion to this gives a packet defined as such:
 
    * Major Version (4 bits): The major version of the sender. Useful for allowing custom definitions.
    * Frame type (4 bits): To allow various types of frames, such as REQUEST (a consumer requesting data from a server), RESPONSE (a server providing a response), and PUBLISH (a packet in a continuous stream of data that does not require REQUESTs)
-   * Flag (4 bits): Allows
+   * Flag (4 bits): Marks some characteristic about a Frame
+   * ID (8 bits): One of two ID fields. Corresponds to Command ID in REQUEST frames, or Subscribe ID in PUBLISH frames
+   * Sequence ID (28 bits): Second identity field. Corresponds to Request ID in REQUEST frames, or absolute position in PUBLISH frames
+   * Payload Length (16 bits): Length of the data payload (where payload is payload_len bytes)
+3. Payload: The contents of the packet. Exactly payload_len bytes long
+4. CRC-32 (Or maybe 16? I think 32 is better though, since either the payload length is very long for PUBLISH messages, or short but we need to be absolutely sure of no errors like in REQUESTs)
