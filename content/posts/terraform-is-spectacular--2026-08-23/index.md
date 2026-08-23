@@ -1,7 +1,7 @@
 ---
 title: Terraform is Spectacular
 date: 2026-08-23T11:06:00+10:00
-description: Terraform is an absolute gift to humanity and everyone should fawn over it
+description: Terraform is an absolute gift to humanity and everyone should use it
 draft: false
 cover:
   relative: true
