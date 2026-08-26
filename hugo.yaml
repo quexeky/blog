@@ -4,7 +4,6 @@ title: quexeky's Blog
 theme: ["PaperMod"]
 
 enableRobotsTXT: true
-buildDrafts: false
 buildFuture: false
 buildExpired: false
 
