@@ -1,8 +1,8 @@
 ---
 title: Designing a Serial communication protocol
-date: 2026-08-19T21:13:00+10:00
+date: 2026-08-26T21:41:00+10:00
 description: Developing a custom protocol over Serial
-draft: false
+draft: true
 cover:
   relative: true
   image: protocol.jpg
@@ -42,8 +42,6 @@ So far my conclusion to this gives a packet defined as such:
 3. Payload: The contents of the packet. Exactly payload_len bytes long
 4. CRC-32 (Or maybe 16? I think 32 is better though, since either the payload length is very long for PUBLISH messages, or short but we need to be absolutely sure of no errors like in REQUESTs)
 
-
-
 # Implementation
 
 Of course, everything is better in Rust. As such, this MVP will also be written as a Rust library initially, before I then use it in an MC. I don't think that it's actually a terribly difficult process. I've recently found the [bilge](https://docs.rs/bilge/latest/bilge/) crate, which seems perfectly suited to this purpose. The Frame Header looks a little something like this:
@@ -82,8 +80,6 @@ pub struct Flag {
 
 (I really love Rust's type checking. In contrast, the implicit type casting in C is atrocious, and I cannot fathom why it is reasonable to cast a 32 bit pointer to a uint16_t, which I accidentally did for a while in a work project :/ )
 
-
-
 ## REQUEST Forms
 
 As much as I love JSON, it's simply too inefficient at what it does. As such, after very little digging, I've found the ["Concise Binary Object Representation" (CBOR)](https://cbor.io/), which I'll be using for any data that needs to be self describing. For example:
@@ -112,8 +108,6 @@ Tells a slave to start a telemetry stream to the device. Requires:
 * List of telemetry fields to be sent (by index to save some space)
 
 In my opinion, this is the key part of the protocol - the ability to subscribe to telemetry so that a slave can continuously push data without requiring a request, one of the key limiting factors of modbus in particular (from the little that I've researched into such similar protocols).
-
-
 
 ## Intermission
 
