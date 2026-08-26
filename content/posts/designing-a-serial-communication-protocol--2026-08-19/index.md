@@ -23,16 +23,10 @@ Now, as with any engineering problem, it's worth looking at what already exists.
 
 So my suggestion: A pub/sub native protocol that allows for both rapid debugging and device control
 
-
-
-
-
 In the process of implementing this, the major problem that I'm having is that of sizing. No doubt there will be more issues later on, but two question for me stand out:
 
 1. How should the frame header be sized? So far I like the idea of having an exactly 64 bit header, however that may become difficult considering how much data is taken up by the Sequence ID (currently 28 bits) and the magic bytes (currently 16 bits), leaving me with only 20 bits to work with.
 2. Should I include payload length in my header? I believe so, for the sake of forwards compatibility (being able to mark a message as X bytes long comes in useful if you don't actually know the command), but it seems like a bit of a waste of space if the payloads are of a known length, defined by the protocol itself.
-
-
 
 So far my conclusion to this gives a packet defined as such:
 
@@ -47,3 +41,43 @@ So far my conclusion to this gives a packet defined as such:
    * Payload Length (16 bits): Length of the data payload (where payload is payload_len bytes)
 3. Payload: The contents of the packet. Exactly payload_len bytes long
 4. CRC-32 (Or maybe 16? I think 32 is better though, since either the payload length is very long for PUBLISH messages, or short but we need to be absolutely sure of no errors like in REQUESTs)
+
+
+
+# Implementation
+
+Of course, everything is better in Rust. As such, this MVP will also be written as a Rust library initially, before I then use it in an MC. I don't think that it's actually a terribly difficult process. I've recently found the [bilge](https://docs.rs/bilge/latest/bilge/) crate, which seems perfectly suited to this purpose. The Frame Header looks a little something like this:
+
+```rust
+#[bitsize(64)]
+#[derive(FromBits, Clone, Copy)]
+pub struct Header {
+    major_version: u4,
+    frame_type: FrameType,
+    flag: Flag,
+    id: u8,
+    sequence_id: u24,
+    payload_length: u16,
+}
+
+#[bitsize(4)]
+#[derive(FromBits, Clone, Copy)]
+pub enum FrameType {
+    Request = 0x1,
+    Response = 0x2,
+    Publish = 0x3,
+    #[fallback]
+    Reserved,
+}
+
+#[bitsize(8)]
+#[derive(FromBits, Clone, Copy)]
+pub struct Flag {
+    requires_ack: bool,
+    finish: bool,
+    reserved: bool,
+    reserved: u5,
+}
+```
+
+(I really love Rust's type checking. In contrast, the implicit type casting in C is atrocious, and I cannot fathom why it is reasonable to cast a 32 bit pointer to a uint16_t, which I accidentally did for a while in a work project :/ )
