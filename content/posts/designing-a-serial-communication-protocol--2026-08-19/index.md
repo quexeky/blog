@@ -81,3 +81,19 @@ pub struct Flag {
 ```
 
 (I really love Rust's type checking. In contrast, the implicit type casting in C is atrocious, and I cannot fathom why it is reasonable to cast a 32 bit pointer to a uint16_t, which I accidentally did for a while in a work project :/ )
+
+
+
+## REQUEST Forms
+
+As much as I love JSON, it's simply too inefficient at what it does. As such, after very little digging, I've found the ["Concise Binary Object Representation" (CBOR)](https://cbor.io/), which I'll be using for any data that needs to be self describing. For example:
+
+### METADATA
+
+The METADATA type for a REQUEST must provide a basic set of specifications about a device, which at minimum means:
+
+* Vendor
+* Manufacturer
+* Serial Number
+
+These are the fields that I personally consider the be an absolute minimum. Since this protocol is extensible, these fields will be stored in CBOR, and manufacturers may include other (unreserved) fields in this response.
