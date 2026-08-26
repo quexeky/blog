@@ -111,4 +111,12 @@ Tells a slave to start a telemetry stream to the device. Requires:
 * Number of telemetry fields
 * List of telemetry fields to be sent (by index to save some space)
 
-In my opinion, this is the key part of the protocol - the ability to subscribe to telemetry without necessarily
+In my opinion, this is the key part of the protocol - the ability to subscribe to telemetry so that a slave can continuously push data without requiring a request, one of the key limiting factors of modbus in particular (from the little that I've researched into such similar protocols).
+
+
+
+## Intermission
+
+Brief aside here that trying to do all of this in rust is rather a pain. There's probably a few libraries that I'm completely missing to do all of this implementation for me, but the closes that I've found have been [binrw](https://crates.io/crates/binrw), [deku](https://crates.io/crates/deku/), and in particular, [bin_proto](https://docs.rs/bin-proto/latest/bin_proto/), the last of which would be a perfect fit, except that it's a rather small crate, and still looks to be under heavy development. I'll probably end up using it eventually, but for this initial version, I'll stick to my (rather terribly) handwritten version. Then we can see what bullshit I can get up to.
+
+For now, I'm going to say goodnight. I don't think it's wise to try to keep my entire journey in a single blog post (considering the failure of my previous forays into writing them), and this one has been apparently a week in the making, so it's probably a good point to stop.
