@@ -95,5 +95,20 @@ The METADATA type for a REQUEST must provide a basic set of specifications about
 * Vendor
 * Manufacturer
 * Serial Number
+* Available telemetry fields (indexed)
 
 These are the fields that I personally consider the be an absolute minimum. Since this protocol is extensible, these fields will be stored in CBOR, and manufacturers may include other (unreserved) fields in this response.
+
+One slight consideration that I'm having is whether I should account for a manufacturer providing more than 64KB of data in their metadata. I'll need to experiment around with it to see if it's necessary.
+
+Another note is that CBOR requires alloc for decoding. This has made me think about the value of prioritising lightweight (no-alloc especially) interaction on slave devices, while permitting alloc on master devices. I think that I will take this approach, which means that anything sent to slave devices must use a rigid structure, while messages from (RESPONSEs) do not necessarily have to be decodable without alloc.
+
+### SUBSCRIBE
+
+Tells a slave to start a telemetry stream to the device. Requires:
+
+* Transmission ID (to be used in the ID field of the PUBLISH messages)
+* Number of telemetry fields
+* List of telemetry fields to be sent (by index to save some space)
+
+In my opinion, this is the key part of the protocol - the ability to subscribe to telemetry without necessarily
