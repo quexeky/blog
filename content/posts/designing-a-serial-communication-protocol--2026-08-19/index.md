@@ -2,7 +2,6 @@
 title: Designing a Serial communication protocol
 date: 2026-08-26T21:41:00+10:00
 description: Developing a custom protocol over Serial
-draft: true
 cover:
   relative: true
   image: protocol.jpg
