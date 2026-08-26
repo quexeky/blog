@@ -2,7 +2,6 @@
 title: Pre-Uni Ramble
 date: 2026-02-10T22:26:00+11:00
 description: Getting ready for Uni, O-Week, and Epson being a pain
-draft: true
 cover:
   relative: true
   image: https://engagementaustralia.org.au/wp-content/uploads/2023/04/new-UNSW-logo-png-vertical-crest.png

@@ -2,7 +2,6 @@
 title: My Hugo + Papermod and Cloudflare setup
 date: 2025-12-27T12:00:00+11:00
 description: A write-up of my Hugo + PaperMod and Cloudflare setup, including some base-level configuration
-draft: false
 cover:
   image: /images/hugo.svg
   alt: "The gohugo logo "
@@ -97,7 +96,6 @@ title: MyHugoBlog # Replace
 theme: ["PaperMod"]
 
 enableRobotsTXT: true
-buildDrafts: false
 buildFuture: false
 buildExpired: false
 
