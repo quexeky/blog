@@ -1,17 +1,17 @@
 ---
 title: Implementing a custom Serial Protocol (part 2)
-date: 2026-08-27T19:20:00+10:00
-description: More implementation details and exploring various ways to make
-  iterators do interesting things
+date: 2026-08-28T17:07:00+10:00
+description: Part 2 of my series on Protocols. Primarily focusing on type-state
+  pattern and correctness today.
 cover:
   relative: true
-showToc: true
+showToc: false
 ---
 I've come to realise that calling this series "designing a custom serial protocol" is probably a bit of a misnomer, because of the fact that, well, this protocol doesn't necessarily operate over serial. Of course, that's probably going to be the most frequently used method of delivery, considering how easy it is to implement UART, USB CDC, and other such things, but *technically*, this can operate on any existing layer 3 or 4 protocol. 
 
 ## Bit by bit (or byte by byte?)
 
-A rather frustrating realisation that I have somehow only just realised is that I'm going to have to process these packets as they come in, rather than sending the entire chunk to RAM at once, since I'd need 65KiB of free RAM to do that (which is rather uncommon!). Of course, this is the way that you should be doing it. It's just annoying. That being said, it may also be a rather interesting task, as I can probably make an iterator over the entire chunk which takes in a reader and reads enough instructions to make an instruction. Yes, I'll do that.
+A rather frustrating realisation that I have somehow only just realised is that I'm going to have to process these packets as they come in, rather than sending the entire chunk to RAM at once, since I'd need 64KiB of free RAM to do that (which is rather uncommon in microcontrollers!). Of course, this is the way that you should be doing it. It's just annoying. That being said, it may also be a rather interesting task, as I can probably make an iterator over the entire chunk which takes in a reader and reads enough instructions to make an instruction. Yes, I'll do that.
 
 Oh man, this is starting to sound fun again.
 
@@ -62,9 +62,17 @@ pub enum Packet<'a, R: Read> {
 }
 ```
 
-To specify that, for any given `Packet`, it requires that a `Read`able object is provided, while allowing `PacketData` to remain free from this constraint. This is important because I want to be able to create two types of `PacketData` structs (although I think I might rename this to `Packet` and what is currently "`Packet`" to `PacketRead` instead), one for when I'm reading from a stream, and one from when I've created it 
+To specify that, for any given `Packet`, it requires that a `Read`able object is provided, while allowing `PacketData` to remain free from this constraint. This is important because I want to be able to create two types of `PacketData` structs (although I think I might rename this to `Packet` and what is currently "`Packet`" to `PacketRead` instead), one for when I'm reading from a stream, and one from when I've created it.
 
-I have come to the conclusion that I should instead take a different approach to this. First I'll start with the actual problem: I want to parse data that contains a metadata field and optionally a "dynamic" list of elements, in that the number of elements is defined by a header in the metadata field. Since we can't use alloc, we will instead use an iterator to read the elements as they come in. This gives the following:
+I don't think that this is working. It's just not quite clicking. Let's try:
+
+# A Different Approach
+
+I have come to the conclusion that I should instead take a different approach to this.
+
+Let's take things step by step. I have an object which I can `Read` data from. It contains a header and 
+
+ First I'll start with the actual problem: I want to parse data that contains a metadata field and optionally a "dynamic" list of elements, in that the number of elements is defined by a header in the metadata field. Since we can't use alloc, we will instead use an iterator to read the elements as they come in. This gives the following:
 
 ```rust
 struct Payload<M, T, I: Iterator<Item = T>> {
@@ -191,7 +199,7 @@ impl<const SIZE: usize, M: MetadataField<SIZE>> Deref for MetadataCache<SIZE, Ca
 
 The key things here are that firstly, the only way to construct Metadata with `MaybeUninit::uninit()` is in the `UnCached` state, which only implements `load`, and **not** `deref`. This guarantees that to get `Cached` `MetadataCache` (and therefore `Deref`) is to call `load`, ensuring safety (ignore the `unwrap` for now. We'll get to that later).
 
-Now let's move on to the `fields`. Since we have the number of fields which are expected to be generated, given an iterator, we know that we will have at least one common field, which is the number of fields remaining. As such, let's remove that `I: Iterator<T>` from the `Payload`, and replace it with our own custom `Iterator`. Furthermore, we'll actually be removing the `fields`, uh, field, from the `Payload`, since it's something that we'll need to generate on the fly, rather than pre-allocate. So we use a marker to define it:
+Now let's move on to the `fields`. Since we have the number of fields which are expected to be generated, given an iterator, we know that we will have at least one common field, which is the number of fields remaining. As such, let's remove that `I: Iterator<T>` from the `Payload`, and replace it with our own custom `Iterator`. Furthermore, we'll actually be removing the `fields`, uh, field, from the `Payload`, since it's something that we'll need to generate on the fly, rather than pre-allocate. We'll keep a marker to make sure that Rust doesn't get angry about it:
 
 ```rust
 struct Payload<
@@ -203,7 +211,7 @@ struct Payload<
     R: Read,
 > {
     metadata: MetadataCache<METADATA_SIZE, S, M>,
-    _field_iterator_marker: PhantomData<FieldIterator<FIELD_SIZE, T, R>>,
+    _field_iterator_marker: PhantomData<T>,
     reader: R,
 }
 
@@ -213,9 +221,19 @@ struct FieldIterator<const SIZE: usize, T: FrameField<SIZE>, R: Read> {
     reader: R,
     _frame_type: PhantomData<T>
 }
+
+impl<const SIZE: usize, T: FrameField<SIZE>, R: Read> FieldIterator<SIZE, T, R> {
+    pub fn new(num_fields: usize, reader: R) -> Self {
+        Self {
+            elements_remaining: num_fields,
+            reader,
+            _frame_type: PhantomData,
+        }
+    }
+}
 ```
 
-To actually construct this iterator though, we must first ensure that we have the correct state. Namely, the `metadata` has to be `Cached`. Care to guess what this means? More type states! (The boilerplate does get annoying though, I must admit)
+To actually construct this iterator though, we must first ensure that we have the correct state. Namely, the `metadata` has to be `Cached`. Care to guess what this means? More type states! (although I admin that the first time I wrote this I wrote a custom `into_iter` function without `IntoIterator` ;-; )
 
 ```rust
 impl<
@@ -224,17 +242,16 @@ impl<
     M: MetadataField<METADATA_SIZE>,
     T: FrameField<FIELD_SIZE>,
     R: Read,
-> Payload<FIELD_SIZE, METADATA_SIZE, M, Cached, T, R>
+> IntoIterator for Payload<FIELD_SIZE, METADATA_SIZE, M, Cached, T, R>
 {
-    pub fn into_iter(self) -> FieldIterator<FIELD_SIZE, T, R> {
-        FieldIterator {
-            elements_remaining: self.metadata.num_fields(),
-            reader: self.reader,
-            _frame_type: PhantomData,
-        }
+    type Item = Result<T, ReadExactError<R::Error>>;
+
+    type IntoIter = FieldIterator<FIELD_SIZE, T, R>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        FieldIterator::new(self.metadata.num_fields(), self.reader)
     }
 }
-
 ```
 
 You'll note here that I'm also intentionally removing the metadata from the `FieldIterator` when we consume the `Payload`. It's entirely possible to keep it, but personally I don't like the mess that it makes in the `FieldIterator`, and in any case I think it's fair enough to just `Copy` it if you *really* need it. For the sake of it though, here's what it would look like if we did:
@@ -264,17 +281,17 @@ impl<
     M: MetadataField<METADATA_SIZE>,
     T: FrameField<FIELD_SIZE>,
     R: Read,
-> Payload<FIELD_SIZE, METADATA_SIZE, M, Cached, T, R>
+> IntoIterator for Payload<FIELD_SIZE, METADATA_SIZE, M, Cached, T, R>
 {
-    pub fn into_iter(self) -> FieldIterator<FIELD_SIZE, METADATA_SIZE, T, R, M> {
-        FieldIterator {
-            elements_remaining: self.metadata.num_fields(),
-            metadata: self.metadata.into_inner(),
-            reader: self.reader,
-            _frame_type: PhantomData,
-        }
+    type Item = Result<T, ReadExactError<R::Error>>;
+
+    type IntoIter = FieldIterator<FIELD_SIZE, T, R>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        FieldIterator::new(self.metadata, self.reader)
     }
 }
+
 
 struct FieldIterator<const FIELD_SIZE: usize, const METADATA_SIZE: usize, T: FrameField<FIELD_SIZE>, R: Read, M: MetadataField<METADATA_SIZE>> {
     elements_remaining: usize,
@@ -283,23 +300,44 @@ struct FieldIterator<const FIELD_SIZE: usize, const METADATA_SIZE: usize, T: Fra
     _frame_type: PhantomData<T>,
 }
 
+impl<const FIELD_SIZE: usize, const METADATA_SIZE: usize, T: FrameField<FIELD_SIZE>, R: Read, M: MetadataField<METADATA_SIZE>> FieldIterator<SIZE, T, R> {
+    pub fn new(metadata: M, reader: R) -> Self {
+        Self {
+            elements_remaining: metadata.num_fields(),
+            metadata,
+            reader,
+            _frame_type: PhantomData,
+        }
+    }
+}
 ```
 
 
 
-Now the only thing left is to iterate over the fields! It's just a matter of implementing `Iterator` for the `FieldIterator`:
+Now the only thing left is to iterate over the fields! You'll notice that there's an angry squiggly line under This is just a matter of implementing `Iterator` for the `Payload`, which isn't a massive hassle:
 
 ```rust
 impl<const SIZE: usize, T: FrameField<SIZE>, R: Read> Iterator for FieldIterator<SIZE, T, R> {
-    type Item = T;
+    type Item = Result<T, ReadExactError<R::Error>>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.elements_remaining == 0 {
             return None;
         }
         let mut buf = [0; SIZE];
-        self.reader.read_exact(&mut buf).ok()?;
-        Some(T::from(buf))
+        match self.reader.read_exact(&mut buf) {
+            Ok(()) => {}
+            Err(e) => return Some(Err(e)),
+        };
+        self.elements_remaining -= 1;
+        Some(Ok(T::from(buf)))
     }
 }
+
 ```
+
+
+
+Sprinkle a few initialisation functions (**while keeping safety guarantees**), and you're good to go!
+
+The code from this latter section is available on my GitHub: <https://github.com/quexeky/procedural-payloads/tree/6d0824cbe410b55e19235ed99c9f96bca6063e69>
