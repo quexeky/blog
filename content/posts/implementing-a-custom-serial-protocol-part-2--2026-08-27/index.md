@@ -84,7 +84,7 @@ struct Payload<M, T, I: Iterator<Item = T>> {
 Now, let's define the metadata field. Let's add a size to it, and specify that it must be able to be formed from a sequence of bytes of that length:
 
 ```rust
-trait MetadataField<const SIZE: usize>: AsRef<[u8]> + From<[u8; SIZE]> {}
+trait MetadataField<const SIZE: usize>: From<[u8; SIZE]> {}
 
 struct Payload<
     const METADATA_SIZE: usize,
@@ -100,8 +100,8 @@ struct Payload<
 Then we'll do something similar for the fields. I'll also add in a requirement to provide the number of fields (for us to use later):
 
 ```rust
-trait FrameField<const SIZE: usize>: AsRef<[u8]> + From<[u8; SIZE]> {}
-trait MetadataField<const SIZE: usize>: AsRef<[u8]> + From<[u8; SIZE]> {
+trait FrameField<const SIZE: usize>: From<[u8; SIZE]> {}
+trait MetadataField<const SIZE: usize>: From<[u8; SIZE]> {
     fn num_fields(&self) -> usize;
 }
 
@@ -312,8 +312,6 @@ impl<const FIELD_SIZE: usize, const METADATA_SIZE: usize, T: FrameField<FIELD_SI
 }
 ```
 
-
-
 Now the only thing left is to iterate over the fields! You'll notice that there's an angry squiggly line under This is just a matter of implementing `Iterator` for the `Payload`, which isn't a massive hassle:
 
 ```rust
@@ -333,10 +331,7 @@ impl<const SIZE: usize, T: FrameField<SIZE>, R: Read> Iterator for FieldIterator
         Some(Ok(T::from(buf)))
     }
 }
-
 ```
-
-
 
 Sprinkle a few initialisation functions (**while keeping safety guarantees**), and you're good to go!
 
