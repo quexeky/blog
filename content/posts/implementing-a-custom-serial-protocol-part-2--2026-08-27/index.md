@@ -336,3 +336,5 @@ impl<const SIZE: usize, T: FrameField<SIZE>, R: Read> Iterator for FieldIterator
 Sprinkle a few initialisation functions (**while keeping safety guarantees**), and you're good to go!
 
 The code from this latter section is available on my GitHub: <https://github.com/quexeky/procedural-payloads/tree/6d0824cbe410b55e19235ed99c9f96bca6063e69>
+
+**Note: I've made significant changes in my repo since making this. The logic here is still valid, however, even if the code no longer reflects it quite so much.**
