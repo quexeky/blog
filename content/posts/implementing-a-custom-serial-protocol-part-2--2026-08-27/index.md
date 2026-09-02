@@ -337,4 +337,4 @@ Sprinkle a few initialisation functions (**while keeping safety guarantees**), a
 
 The code from this latter section is available on my GitHub: <https://github.com/quexeky/procedural-payloads/tree/6d0824cbe410b55e19235ed99c9f96bca6063e69>
 
-**Note: I've made significant changes in my repo since making this. The logic here is still valid, however, even if the code no longer reflects it quite so much.**
+**Note: I've made significant changes in my repo since making this. The logic here is still valid, however, even if the code no longer reflects it quite so much. There are likely things missing which I have corrected, but forgotten to add. See the current version for an actually fully up-to-date implementation**
