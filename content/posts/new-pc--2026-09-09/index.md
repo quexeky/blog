@@ -1,5 +1,5 @@
 ---
-title: New PC! Hardware & software review
+title: New PC because compiling fast is fun
 date: 2026-09-09T14:04:00+10:00
 description: Thinking rocks go brrrrr
 cover:
@@ -22,7 +22,7 @@ Specs:
 
 Plus whatever storage I could scavenge from various computers, including a 500GB NVME, 500GB 2.5" SSD, and a 4TB IronWolf that I bought a few years ago and never really put to use.
 
-This has been far more of a journey than it has any right to be - I'd expect that *maybe* there are a few things that happen randomly that make buying a PC slightly more difficult than just going to a brick and mortar shop, buying the parts, and building it, but apparently not!
+This has been far more of a journey than it has any right to be - not that it was especially worse than I had expected (aside from the indecision in actually choosing the parts I wanted ;-;).
 
 The biggest problem that I had was buying RAM (because of course it was a problem in this economy). I originally bought a pair of 16GB Crucial Pro OC DDR5, 6400MHz CL**32** sticks from Amazon, but whether due to bad luck, bad timing, or a combination of the two, my package arrived completely empty aside from the receipt from Amazon Germany. Not happy at all.
 
@@ -30,7 +30,7 @@ Still, at least there were things to take from it - as a result, I had to get my
 
 Anyway, Amazon sent me my money back, and I immediately went and ordered slightly worse RAM for roughly the same price off Scorptec, because I have realised that local businesses tend to do things far better than megacorporations, at least when it comes to selling physical *things*. As such, almost my entire PC was bought off Scorptec; the only thing remaining is the GPU (which I will also probably buy from them), and the PSU. Excellent experience will shop again.
 
-Speaking of PSUs, my other major pain point was just that (if you can really call it a pain point). I made the mistake of judging PSUs by the 80+ rating, assuming that a Platinum PSU would be better than a Gold one in terms of reliability, which isn't necessarily the case. Rather, since PSU ratings truly only do account for power efficiency, the better way to go about it is just to find a tier list (I used [SPL's Tier List](https://psutierlist.org/)), filter by the specs that you need, sort by rating, and choose the highest rated one that's in your budget. 
+Speaking of PSUs, my other major pain point was just that (albeit, it wasn't really that much of one). I made the mistake of judging PSUs by the 80+ rating, assuming that a Platinum PSU would be better than a Gold one in terms of reliability, which isn't necessarily the case. Rather, since PSU ratings truly only do account for power efficiency, the better way to go about it is just to find a tier list (I used [SPL's Tier List](https://psutierlist.org/)), filter by the specs that you need, sort by rating, and choose the highest rated one that's in your budget. 
 
 Anyway, I *didn't* do this initially, and instead spent far too long looking around for PSUs, finding the Seasonic FOCUS PX, which does seem to be a very solid PSU, but I didn't really need that much efficiency. As such, after I ordered it from MWave, read enough reviews to make me second guess about MWave and their customer service, took a moment, and then looked around for other PSU options (the FOCUS PX wasn't available on Scorptec), I settled on the rm850x by pretty much doing what I said before, then reading a few reviews to make sure that everything would be all good, and getting it hot off the Amazon press as my last order from Amazon for a while (I'm still very pissed about the whole RAM situation). 
 
@@ -57,7 +57,5 @@ Finally Fedora, which ironically I haven't actually personally installed on my c
 Finally I decided to give it a spin to test how it would run and oh wow. Compiling the [Drop App](https://github.com/Drop-OSS/drop) in release went from a little under 10 minutes to a little under 2.
 
 I don't think I can effectively explain how nice this is. I've spent hours just watching rust tick away at its next compile step. Cutting that by a whole five times is like a dream come true.
-
-
 
 I'll make a post about my server infrastructure soon. Goodnight for now!
