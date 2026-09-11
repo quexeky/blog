@@ -4,6 +4,9 @@ date: 2026-09-09T14:04:00+10:00
 description: Thinking rocks go brrrrr
 cover:
   relative: true
+  image: https://cdn.sanity.io/images/uxzbxy2o/production/5f71adedf6253fc71df4f2257ee8a948395ddec3-2560x2560.jpg?w=1080&q=75&auto=format
+  caption: The Fractal Design North Case
+  alt: Fractal Design's North case
 showToc: true
 ---
 # Hardware
