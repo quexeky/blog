@@ -14,5 +14,12 @@ Personally, I very much agree - all tech must be human at some level, because at
 
 While there is no field that is necessarily more important than any of the others (to each their own, though), the aspect which applies to me personally is that of Engineering. As such, I'll propose the following axioms:
 
-1. Technology requires interaction to be useful
-2. All technology has been designed by humans, OR it has been designed by something which was designed by humans
+1. A tool requires interaction to be useful
+2. An optimal tool is optimally useful
+3. Interacting with a tool which itself interacts with another tool requires interacting by the other tool by implication
+4. The creation of a tool requires interaction
+5. All technology is a tool
+
+
+
+My point is that Engineering is inherently the act of solving human problems. Whether that means that the products produced by a technology are used directly by humans (such as toys being made by industrial robots), or
