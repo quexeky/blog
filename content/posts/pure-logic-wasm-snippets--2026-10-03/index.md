@@ -20,11 +20,7 @@ A Package:
 6. Must be easy to implement with basic rust code
 7. Returns a list of features which may be used
 
-
-
 \* A "typical" license would be anything that does not require significant conditional feature gating such as enterprise use cases
-
-
 
 Let's start with a basic WASM project from the [Mozilla docs](https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Rust_to_Wasm):
 
@@ -33,8 +29,6 @@ Let's start with a basic WASM project from the [Mozilla docs](https://developer.
 └── src
     └── lib.rs
 ```
-
-
 
 ```toml
 [package]
@@ -63,8 +57,6 @@ pub fn greet(name: &str) {
 }
 ```
 
-
-
 You can find an explanation of what all of this does in those docs.
 
 Running `wasm-pack build` generates a `pkg` directory, containing, among other things, our `your_new_wasm_project.wasm` file! Combining this with an `index.html` file and `python -m http.server` like so:
@@ -82,7 +74,6 @@ Running `wasm-pack build` generates a `pkg` directory, containing, among other t
 │   └── your_new_wasm_project.js
 └── src
     └── lib.rs
-
 ```
 
 ```html
@@ -108,11 +99,7 @@ Gives us a lovely little introduction:
 
 ![](screenshot-from-2026-10-03-17-53-56.png)
 
-
-
 Of course, this is a far cry from what we're looking for. I mean, we're not planning on using JavaScript and a UI to run these, among quite a few other issues. Now that we know that wasm *works*, I think it's time to take a bit of a leap and already cut out the "web" part of "web assembly." Let's start with an "add" function:
-
- 
 
 ```rust
 #[unsafe(no_mangle)]
@@ -136,7 +123,7 @@ fn main() {
     let engine = Engine::default();
     let module = Module::from_file(
         &engine,
-        "../your_new_wasm_project/target/wasm32-wasip1/release/your_new_wasm_project.wasm",
+        "../your_new_wasm_project/target/wasm32-unknown-unknown/release/your_new_wasm_project.wasm",
     )
     .unwrap();
     let mut store = Store::new(&engine, ());
@@ -155,4 +142,24 @@ See? Not that bad at all. Here's what this is doing:
 
 1. Create a wasmtime Instance from the existing `wasm` file
 2. Register the "add" function as a function which takes in two i32 values (a and b), and outputs a new i32
-3. Call the "add" function and print it
+3. Call the "add" function and print the output
+
+```shell
+cargo run
+# Result from Wasm: -3
+```
+
+Success!
+
+Alright, so we've got a library that can use wasm files to run basic functions. Let's extend it with a little bit of functionality, courtesy of the runner. For this, I'll need the following functions:
+
+```rust
+unsafe extern "C" {
+    fn system_timestamp() -> u64;
+    fn hardware_hash() -> Buffer;
+    fn sha256() -> Buffer;
+    fn post(url: Buffer) -> u32;
+}
+```
+
+Here again, we are defining an extern block. If you're interested in more in-depth FFI, the [rustnomicon](https://doc.rust-lang.org/nomicon/ffi.html) has an excellent guide. You'll also notice that I have introduced a `Buffer` type. I've defined this in a crate that's shared between both the Runner and the
