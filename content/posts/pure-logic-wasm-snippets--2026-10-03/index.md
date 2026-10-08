@@ -243,4 +243,4 @@ Now this is a slightly frightening bit of unsafe code. Don't worry! It's really 
 1. Getting a mutable pointer to the URL Buffer (don't do this in normal rust code!)
 2. Adding an offset of the number of bytes that we've already written to this pointer (`wrapping_add`)
 3. Copying data from the array to the pointer that we've generated, and writing the length of the array to it
-4.
+4. Adding the number of bytes that we've written to the tracker
