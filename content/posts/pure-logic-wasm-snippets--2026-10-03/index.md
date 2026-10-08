@@ -154,12 +154,64 @@ Success!
 Alright, so we've got a library that can use wasm files to run basic functions. Let's extend it with a little bit of functionality, courtesy of the runner. For this, I'll need the following functions:
 
 ```rust
+#[link(wasm_import_module = "env")]
 unsafe extern "C" {
+    /// Returns the current timestamp in seconds
     fn system_timestamp() -> u64;
+    /// Returns a sha256 (4 byte buffer) hash of the current hardware
     fn hardware_hash() -> Buffer;
-    fn sha256() -> Buffer;
+    /// Writes a POST request to a server, converting the buffer into a string
+    /// Returns the status code
     fn post(url: Buffer) -> u32;
+    /// Converts a buffer into a hex string
+    fn hex(buf: Buffer) -> Buffer;
 }
 ```
 
-Here again, we are defining an extern block. If you're interested in more in-depth FFI, the [rustnomicon](https://doc.rust-lang.org/nomicon/ffi.html) has an excellent guide. You'll also notice that I have introduced a `Buffer` type. I've defined this in a crate that's shared between both the Runner and the
+Here again, we are defining an extern block. If you're interested in more in-depth FFI, the [rustnomicon](https://doc.rust-lang.org/nomicon/ffi.html) has an excellent guide. You'll also notice that I have introduced a `Buffer` type. I've defined this in a crate that's shared between both the Runner and the program itself, since in the C ABI, the ordering of values in a struct does matter, so I may as well be sure that they're properly shared. All it is is a pointer and a length:
+
+```rust
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Buffer {
+    pub ptr: *const u8,
+    pub len: u32,
+}
+
+```
+
+But functions are useless without being, well, used! For this, I'll make a little `validate` function. For now it'll just collect data and return that the license is valid, but we'll get around to actual checks in a moment.
+
+```rust
+use shared::Buffer;
+
+#[link(wasm_import_module = "env")]
+unsafe extern "C" {
+    /// Returns the current timestamp in seconds
+    fn system_timestamp() -> u64;
+    /// Returns a sha256 (4 byte buffer) hash of the current hardware
+    fn hardware_hash() -> Buffer;
+    /// Writes a POST request to a server, converting the buffer into a string
+    /// Returns the status code
+    fn post(url: Buffer) -> u32;
+    /// Converts a buffer into a hex string
+    fn hex(buf: Buffer) -> Buffer;
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn validate(license: Buffer) -> bool {
+    let hardware_hash = unsafe { hex(hardware_hash()) };
+    let system_timestamp = unsafe { hex_u64(&system_timestamp()) };
+
+    true
+}
+
+fn hex_u64<'a>(i: &'a u64) -> Buffer {
+    let buf = Buffer {
+        ptr: i as *const u64 as *const u8,
+        len: 8,
+    };
+    buf
+}
+
+```
