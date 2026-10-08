@@ -215,3 +215,32 @@ fn hex_u64<'a>(i: &'a u64) -> Buffer {
 }
 
 ```
+
+All of this is fine and well, but we also need to be able to check this against some external source. As such, we're going to need that `post` function that's still lying unused. Furthermore, we can't always assume that the license will be valid, so we'll need to check that the POST request returns a correct value. So let's start building a URL!
+
+I'll start with a shared buffer for the URL:
+
+```rust
+static mut URL_BUF: [u8; 1024] = [0; 1024];
+```
+
+This is useful because it allows us to put all of our data into a single buffer and then send if off to the Runner via the `post` function. To edit it though, we'll need an `append` function, as well as something to keep track of where we're writing to in the URL.
+
+```rust
+static mut URL_LEN: usize = 0;
+
+fn append(arr: &[u8]) {
+    unsafe {
+        let dst = (&raw mut URL_BUF as *mut u8).wrapping_add(URL_LEN);
+        core::ptr::copy_nonoverlapping(arr.as_ptr(), dst, arr.len());
+        URL_LEN += arr.len();
+    }
+}
+```
+
+Now this is a slightly frightening bit of unsafe code. Don't worry! It's really not that bad. In order, we are:
+
+1. Getting a mutable pointer to the URL Buffer (don't do this in normal rust code!)
+2. Adding an offset of the number of bytes that we've already written to this pointer (`wrapping_add`)
+3. Copying data from the array to the pointer that we've generated, and writing the length of the array to it
+4.
