@@ -262,9 +262,40 @@ pub extern "C" fn validate() -> bool {
 
 Here I'm going to assume that a status response of 200 means that the license has been validated.
 
+There does feel like there's something missing though. Maybeeeeee... a license key? The unique value that is mean to be your secret? Let's add that next!
+
+```rust
+#[unsafe(no_mangle)]
+pub static LICENSE_KEY: [u8; 16] = *b"__LICENSE_PLACE_";
+
+#[unsafe(no_mangle)]
+pub extern "C" fn validate() -> bool {
+    let hardware_hash = unsafe { hex(hardware_hash()) };
+    let system_timestamp = unsafe { hex_u64(&system_timestamp()) };
+    let license_hex = unsafe {
+        hex(Buffer {
+            ptr: LICENSE_KEY.as_ptr() as *const u8,
+            len: LICENSE_KEY.len() as u32,
+        })
+    };
 
 
+    let url = format!("https://license.recadia.dev/v1?hw={}&ts={}&lk={}", hardware_hash, system_timestamp, license_hex);
+    let url_p = url.as_str();
 
+    unsafe {
+        post(Buffer {
+            ptr: &raw const url_p as *const u8,
+            len: url.len() as u32,
+        }) == 200
+    }
+}
+
+```
+
+I've put the `LICENSE_KEY` into an un-mangled value with a placeholder, just to make it a little easier to replace it with an actual license key from this essentially template binary.
+
+And we're done! After 
 
 
 
