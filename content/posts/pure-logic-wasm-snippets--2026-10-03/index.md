@@ -18,7 +18,6 @@ A Package:
 4. Will include a signature by the original license provider
 5. Is unique per license (to require unique signatures)
 6. Must be easy to implement with basic rust code
-7. Returns a list of features which may be used
 
 \* A "typical" license would be anything that does not require significant conditional feature gating such as enterprise use cases
 
@@ -218,6 +217,57 @@ fn hex_u64<'a>(i: &'a u64) -> Buffer {
 
 All of this is fine and well, but we also need to be able to check this against some external source. As such, we're going to need that `post` function that's still lying unused. Furthermore, we can't always assume that the license will be valid, so we'll need to check that the POST request returns a correct value. So let's start building a URL!
 
+For starters, let's make it a little easier to print a `Buffer`. Since we know that the host function will turn it into valid ASCII text, a basic loop can iterate through each of the bytes and convert it.
+
+```rust
+impl Display for Buffer {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let slice: &[u8] = (*self).into();
+        for byte in slice {
+            for ch in std::ascii::escape_default(*byte) {
+                write!(f, "{}", ch as char)?;
+            }
+        }
+        Ok(())
+    }
+}
+
+impl From<Buffer> for &[u8] {
+    fn from(value: Buffer) -> Self {
+        unsafe { from_raw_parts(value.ptr, value.len as usize) }
+    }
+}
+```
+
+With this, it becomes trivial to create a useful string using the `format!()` macro, which we then turn into a Buffer to feed back into the host.
+
+```rust
+#[unsafe(no_mangle)]
+pub extern "C" fn validate() -> bool {
+    let hardware_hash = unsafe { hex(hardware_hash()) };
+    let system_timestamp = unsafe { hex_u64(&system_timestamp()) };
+
+    let url = format!("https://license.recadia.dev/v1?hw={}&ts={}", hardware_hash, system_timestamp);
+    let url_p = url.as_str();
+
+    unsafe {
+        post(Buffer {
+            ptr: &raw const url_p as *const u8,
+            len: url.len() as u32,
+        }) == 200
+    }
+}
+
+```
+
+Here I'm going to assume that a status response of 200 means that the license has been validated.
+
+
+
+
+
+
+
 I'll start with a shared buffer for the URL:
 
 ```rust
@@ -244,3 +294,93 @@ Now this is a slightly frightening bit of unsafe code. Don't worry! It's really 
 2. Adding an offset of the number of bytes that we've already written to this pointer (`wrapping_add`)
 3. Copying data from the array to the pointer that we've generated, and writing the length of the array to it
 4. Adding the number of bytes that we've written to the tracker
+
+This allows us to feed in an arbitrary buffer and `append` it to the end of the URL, which seems like the easiest approach to take to this. To use it, let's construct an actual URL:
+
+```rust
+static URL: &[u8] = b"https://license.recadia.dev/v1";
+
+#[unsafe(no_mangle)]
+pub extern "C" fn validate() -> bool {
+    append(URL);
+    let hardware_hash = unsafe { hex(hardware_hash()) };
+    let system_timestamp = unsafe { hex_u64(&system_timestamp()) };
+
+    append(b"?hw=");
+    append(hardware_hash.into());
+
+    append(b"&ts=");
+    append(system_timestamp.into());
+
+
+    unsafe {
+        post(Buffer {
+            ptr: &raw const URL_BUF as *const u8,
+            len: URL_LEN as u32,
+        }) == 200
+    }
+}
+
+```
+
+I've also added a utility `From` implementation:
+
+```rust
+impl From<Buffer> for &[u8] {
+    fn from(value: Buffer) -> Self {
+        unsafe {
+            from_raw_parts(value.ptr, value.len as usize)
+        }
+    }
+}
+```
+
+Which simply constructs a slice from a pointer and a length.
+
+This then prompts out host to send a POST request with the following URL:
+
+> `https://license.recadia.dev/v1?hw=HARDWARE_HEX&ts=TIMESTAMP_HEX`
+
+Which is a reasonable start, but it does feel like it's missing the License Key part of a License. I'll add this as an un-mangled static so that it's easy for the license provider to edit it (so that you can make valid licenses!), and for the host to read it:
+
+```rust
+#[unsafe(no_mangle)]
+pub static LICENSE_KEY: [u8; 16] = *b"__LICENSE_PLACE_";
+
+#[unsafe(no_mangle)]
+pub extern "C" fn validate() -> bool {
+    append(URL);
+    let hardware_hash = unsafe { hex(hardware_hash()) };
+    let system_timestamp = unsafe { hex_u64(&system_timestamp()) };
+    let license_hex = unsafe {
+        hex(Buffer {
+            ptr: LICENSE_KEY.as_ptr() as *const u8,
+            len: LICENSE_KEY.len() as u32,
+        })
+    };
+
+    append(b"?hw=");
+    append(hardware_hash.into());
+
+    append(b"&ts=");
+    append(system_timestamp.into());
+
+    append(b"&lk=");
+    append(license_hex.into());
+
+    unsafe {
+        post(Buffer {
+            ptr: &raw const URL_BUF as *const u8,
+            len: URL_LEN as u32,
+        }) == 200
+    }
+}
+```
+
+And just like that, we've got a basic license check! It's not especially robust, but the combination of a license key, as well as a hardware hash and the system timestamp should be enough to stop the least interested parties from pirating a copy. This is also where I'll be leaving it for the most part, since the intricacies of actual DRM checks are something that I have yet to research in depth.
+
+
+
+## Size...
+
+With all of this said and done, there are a few issues remaining, primarily that of the 384 bytes.
