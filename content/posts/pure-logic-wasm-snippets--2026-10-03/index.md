@@ -176,7 +176,6 @@ pub struct Buffer {
     pub ptr: *const u8,
     pub len: u32,
 }
-
 ```
 
 But functions are useless without being, well, used! For this, I'll make a little `validate` function. For now it'll just collect data and return that the license is valid, but we'll get around to actual checks in a moment.
@@ -212,7 +211,6 @@ fn hex_u64<'a>(i: &'a u64) -> Buffer {
     };
     buf
 }
-
 ```
 
 All of this is fine and well, but we also need to be able to check this against some external source. As such, we're going to need that `post` function that's still lying unused. Furthermore, we can't always assume that the license will be valid, so we'll need to check that the POST request returns a correct value. So let's start building a URL!
@@ -257,7 +255,6 @@ pub extern "C" fn validate() -> bool {
         }) == 200
     }
 }
-
 ```
 
 Here I'm going to assume that a status response of 200 means that the license has been validated.
@@ -290,14 +287,11 @@ pub extern "C" fn validate() -> bool {
         }) == 200
     }
 }
-
 ```
 
 I've put the `LICENSE_KEY` into an un-mangled value with a placeholder, just to make it a little easier to replace it with an actual license key from this essentially template binary.
 
 And we're done! After 
-
-
 
 I'll start with a shared buffer for the URL:
 
@@ -351,7 +345,6 @@ pub extern "C" fn validate() -> bool {
         }) == 200
     }
 }
-
 ```
 
 I've also added a utility `From` implementation:
@@ -409,8 +402,6 @@ pub extern "C" fn validate() -> bool {
 ```
 
 And just like that, we've got a basic license check! It's not especially robust, but the combination of a license key, as well as a hardware hash and the system timestamp should be enough to stop the least interested parties from pirating a copy. This is also where I'll be leaving it for the most part, since the intricacies of actual DRM checks are something that I have yet to research in depth.
-
-
 
 ## Size...
 
