@@ -14,12 +14,20 @@ Personally, I very much agree - all tech must be human at some level, because at
 
 While there is no field that is necessarily more important than any of the others (to each their own, though), the aspect which applies to me personally is that of Engineering. As such, I'll propose the following axioms:
 
-1. A tool requires interaction to be useful
-2. An optimal tool is optimally useful
-3. Interacting with a tool which itself interacts with another tool requires interacting by the other tool by implication
-4. The creation of a tool requires interaction
-5. All technology is a tool
+1. A tool performs its function via interaction
+2. A tool's effectiveness is relative to the purpose for which it is used
+3. The use of a tool is transitive*
+
+*In that using a tool which in some way requires another tool, means interacting with both transitively
+
+Furthermore, assume that all technology is a tool (a truism), and finally:
+
+4. Technology is created to serve human purposes
+
+This is where Engineering comes in. Let us propose that Engineering is the application of technical knowledge to design, build, and improve technological systems. By this, I mean that, taking one of the simplest tools, a hammer, it is not a very good hammer if the handle breaks as you take your first swing with it. Nor is it useful if it bounces off something you have tried to hit, or if you wanted to use it to prop something up, and it isn't the right fit. I give these examples to demonstrate that while a hammer is designed to hit things, its usefulness is relative to the purpose that you intend it for - a hammer that is used to hit something hard and simply breaks, is discarded as "useless," because it did not fulfill its purpose. A mobile phone that cannot call or text, if it is used for those exact things, is also useless. But a phone that cannot call or text is very useful if the only purpose is to play games on it (assuming that it can), in the same way that a camera is useful for taking photos. And so we get the first and second axioms: 1) A tool requires interaction to be useful and 2) A tool's effectiveness is relative to the purpose for which it is used.
+
+To take this a little further, an industrial manufacturing arm is useful because it can assemble things the exact same way for many thousands or even millions of cycles, but is useless if it has not been programmed to do so. Once it has been programmed, however, it can be used to make all manner of things. Say, a toy train. Such a robotic arm contributes to the creation of the toy, and so while whoever plays with the train at the end did not directly interact with the code which was written, nor the machine that made it, the toy could not have been made without them. As such, the fact that the toy exists and has been "useful" (played with), makes the manufacturing arm useful by proxy. Thus we get the third axiom: The use of a tool is transitive.
 
 
 
-My point is that Engineering is inherently the act of solving human problems. Whether that means that the products produced by a technology are used directly by humans (such as toys being made by industrial robots), or
+Engineering applies technical knowledge to design, build, and improve systems that serve human purposes
