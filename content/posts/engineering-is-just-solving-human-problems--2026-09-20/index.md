@@ -18,7 +18,7 @@ While there is no field that is necessarily more important than any of the other
 2. A tool's effectiveness is relative to the purpose for which it is used
 3. The use of a tool is transitive*
 
-*In that using a tool which in some way requires another tool, means interacting with both transitively
+\*In that using a tool which in some way requires another tool, means interacting with both transitively
 
 Furthermore, assume that all technology is a tool (a truism), and finally:
 
@@ -32,10 +32,6 @@ The fourth principle becomes a little harder to propose, as it relies on two ass
 
 Alternatively, consider what happens when an Engineer forgets the human aspect of design. Over-engineered smart dishwashers that can be started with a voice assistant, $800 smart toothbrushes that is meant to replace flossing while being less effective than actual flossing, and a juice making machine that requires you to supply it with essentially juice boxes. Also user interfaces that bury functionality under three layers of settings menus, or have a region option on billing payments that are in a tiny box in a previous page (in a flow that is dedicated to just billing), and so, so many more.
 
-It's not necessarily just the end-user facing side of it either, though. A civil engineer needs to make drawings for external review, and confusion there can have disastrous consequences. A software engineer needs to make code maintainable, and nuclear engineers make systems safe for humans to use. Not only is it the output of a string of technological devices that must work well for humans, but very often, also the in-between stages.
+It's not necessarily just the end-user facing side of it either, though. A civil engineer needs to make drawings for external review, and confusion there can have disastrous consequences. A software engineer needs to make code maintainable, and nuclear engineers make systems safe for humans to use. Even MCP servers that are fully designed by an LLM for LLMs, are designed to make using these tools faster and more convenient for humans. Not only is it the output of a string of technological devices that must work well for humans, but very often, also the in-between stages.
 
-The point is, all technology that has been invented by humans so far, has been designed for humans at some level. Even MCP servers that are fully designed by an LLM, for LLMs, are designed to make using these tools faster and more convenient for humans. That is why  
-
-
-
-Engineering applies technical knowledge to design, build, and improve systems that serve human purposes
+The point is, all technology that has been invented by humans so far, has been designed for humans at some level. There is no separation between human and technology, because tech *is* human.
