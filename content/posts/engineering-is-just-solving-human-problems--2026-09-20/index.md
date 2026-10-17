@@ -1,6 +1,6 @@
 ---
 title: Engineering is just solving Human problems
-date: 2026-09-21T08:44:00+10:00
+date: 2026-10-17T20:06:00+11:00
 description: Engineering is just solving Human problems
 cover:
   relative: true
