@@ -167,11 +167,7 @@ unsafe extern "C" {
 }
 ```
 
-The process for this basic license check is going to be: Get the system timestamp, some sort of hardware fingerprint (`hardware_hash`), convert both into a hex value, and then get the host to send a 
-
-
-
-Here again, we are defining an extern block. If you're interested in more in-depth FFI, the [rustnomicon](https://doc.rust-lang.org/nomicon/ffi.html) has an excellent guide. You'll also notice that I have introduced a `Buffer` type. I've defined this in a crate that's shared between both the Runner and the program itself, since in the C ABI, the ordering of values in a struct does matter, so I may as well be sure that they're properly shared. All it is is a pointer and a length:
+Here again, we are defining an extern block. If you're interested in more in-depth FFI, the [rustnomicon](https://doc.rust-lang.org/nomicon/ffi.html) has an excellent guide, but all we're doing here is depending on the runner to provide us with some more complicated functions. You'll also notice that I have introduced a `Buffer` type. I've defined this in a crate that's shared between both the Runner and the program itself, since in the C ABI, the ordering of values in a struct does matter, so I may as well be sure that they're properly shared. All it is is a pointer and a length:
 
 ```rust
 #[repr(C)]
@@ -179,6 +175,15 @@ Here again, we are defining an extern block. If you're interested in more in-dep
 pub struct Buffer {
     pub ptr: *const u8,
     pub len: u32,
+}
+
+impl From<&'static [u8]> for Buffer {
+    fn from(value: &'static [u8]) -> Self {
+        Buffer {
+            ptr: value.as_ptr(),
+            len: value.len() as u32
+        }
+    }
 }
 ```
 
@@ -217,9 +222,9 @@ fn hex_u64<'a>(i: &'a u64) -> Buffer {
 }
 ```
 
-All of this is fine and well, but we also need to be able to check this against some external source. As such, we're going to need that `post` function that's still lying unused. Furthermore, we can't always assume that the license will be valid, so we'll need to check that the POST request returns a correct value. So let's start building a URL!
+All of this is fine and well, but we also need to be able to check this against some external source. As such, we're going to need that `post` function that's still lying unused. Furthermore, we can't always assume that the license will be valid. As such, the process for this basic license check is going to be: Get the system timestamp, some sort of hardware fingerprint (`hardware_hash`), convert both into a hex value, and construct a URL for the host to send a request to. We've already got a lot of that, so let's start building a URL!
 
-For starters, let's make it a little easier to print a `Buffer`. Since we know that the host function will turn it into valid ASCII text, a basic loop can iterate through each of the bytes and convert it.
+For starters, let's make it a little easier to print a `Buffer`. Since we know that the host function will turn it into valid ASCII text, a basic loop can iterate through each of the bytes and convert them.
 
 ```rust
 impl Display for Buffer {
@@ -293,9 +298,9 @@ pub extern "C" fn validate() -> bool {
 }
 ```
 
-I've put the `LICENSE_KEY` into an un-mangled value with a placeholder, just to make it a little easier to replace it with an actual license key from this essentially template binary.
+I've put the `LICENSE_KEY` into an un-mangled value with a placeholder. This means that we can compile this binary once, and the run a find+replace to insert our actual key (I'll get to this later).
 
-And we're done! After 
+And we're done! Assuming that this is an actual endpoint (I won't get into that here), we can run this from our host like so:
 
 I'll start with a shared buffer for the URL:
 
